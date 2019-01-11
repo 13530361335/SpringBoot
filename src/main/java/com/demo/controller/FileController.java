@@ -21,6 +21,7 @@ public class FileController {
 
     @PostMapping(value = "upload")
     public Result<Integer> upload(MultipartFile file) throws IOException {
+
         return fileService.upload(file);
     }
 }

@@ -12,10 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 
-@Api(description = "文件服务")
+@Api(description = "快速测试")
 @RequestMapping("test")
 @RestController
 public class ControllerTest {
@@ -24,22 +23,15 @@ public class ControllerTest {
     int port;
 
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private FtpUtil ftpUtil;
 
     @Autowired
-    private FtpUtil ftpUtil;
+    private UserInfoMapper userInfoMapper;
 
     @RequestMapping(value = "port",method = RequestMethod.GET)
     public String port() {
         return "你访问的rest的端口是:" + port;
     }
-
-    @RequestMapping(value = "sql",method = RequestMethod.GET)
-    public Result sql() {
-        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(1);
-        return new Result(userInfo);
-    }
-
 
     @PostMapping(value = "upload")
     public String upload(MultipartFile file) throws IOException {
@@ -48,4 +40,11 @@ public class ControllerTest {
         ftpUtil.upload(dir,fileName,file.getInputStream());
         return "success";
     }
+
+    @RequestMapping(value = "sql",method = RequestMethod.GET)
+    public Result sql() {
+        UserInfo userInfo = userInfoMapper.selectByPrimaryKey(1);
+        return new Result(userInfo);
+    }
+
 }
