@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.FileInfoMapper">
+  <resultMap id="BaseResultMap" type="com.demo.entity.FileInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="md5" jdbcType="VARCHAR" property="md5" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="size" jdbcType="BIGINT" property="size" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, md5, file_name, size, type, upload_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from file_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from file_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.demo.entity.FileInfo">
+    insert into file_info (id, md5, file_name, 
+      size, type, upload_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{md5,jdbcType=VARCHAR}, #{fileName,jdbcType=VARCHAR}, 
+      #{size,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{uploadTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.demo.entity.FileInfo">
+    insert into file_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="md5 != null">
+        md5,
+      </if>
+      <if test="fileName != null">
+        file_name,
+      </if>
+      <if test="size != null">
+        size,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="uploadTime != null">
+        upload_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="md5 != null">
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null">
+        #{size,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.demo.entity.FileInfo">
+    update file_info
+    <set>
+      <if test="md5 != null">
+        md5 = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="fileName != null">
+        file_name = #{fileName,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null">
+        size = #{size,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.demo.entity.FileInfo">
+    update file_info
+    set md5 = #{md5,jdbcType=VARCHAR},
+      file_name = #{fileName,jdbcType=VARCHAR},
+      size = #{size,jdbcType=BIGINT},
+      type = #{type,jdbcType=VARCHAR},
+      upload_time = #{uploadTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByMD5" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from file_info
+    where md5 = #{md5,jdbcType=INTEGER}
+  </select>
+
+</mapper>
