@@ -4,18 +4,18 @@
     <!-- jdbc路径 -->
     <classPathEntry location="D:/SoftWare/apache-maven-3.6.0/repository/mysql/mysql-connector-java/5.1.30/mysql-connector-java-5.1.30.jar"/>
     <!-- 去除注释 -->
-    <context id="default">
+    <context id="default" targetRuntime="MyBatis3">
         <commentGenerator>  <property name="suppressAllComments" value="true" />  </commentGenerator>
         <jdbcConnection userId="root" password="19930913"  connectionURL="jdbc:mysql://localhost:3306/demo" driverClass="com.mysql.jdbc.Driver"></jdbcConnection>
         <!-- 实体 -->
         <javaModelGenerator  targetPackage="com.demo.entity" targetProject="./src/main/java"/>
         <!-- XML -->
-        <sqlMapGenerator     targetPackage="mapper"                  targetProject="./src/main/resources"/>
+        <sqlMapGenerator     targetPackage="com.demo.mapper" targetProject="./src/main/java"/>
         <!-- 接口 -->
         <javaClientGenerator targetPackage="com.demo.dao"    targetProject="./src/main/java" type="XMLMAPPER"/>
-
         <!-- 表/实体 -->
         <table  tableName="%" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
                 enableSelectByExample="false" selectByExampleQueryId="false" ></table>
     </context>
+
 </generatorConfiguration>

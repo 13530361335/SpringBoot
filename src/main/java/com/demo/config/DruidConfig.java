@@ -16,10 +16,11 @@ import java.sql.SQLException;
 
 @Configuration
 public class DruidConfig {
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
     @Value("${spring.datasource.url}")
-    private String dbUrl;
+    private String url;
     
     @Value("${spring.datasource.username}")
     private String username;
@@ -71,10 +72,11 @@ public class DruidConfig {
         ServletRegistrationBean reg = new ServletRegistrationBean();
         reg.setServlet(new StatViewServlet());
         reg.addUrlMappings("/druid/*");
-        reg.addInitParameter("loginUsername", "admin");
-        reg.addInitParameter("loginPassword", "123456");
+        reg.addInitParameter("loginUsername", username);
+        reg.addInitParameter("loginPassword", password);
         return reg;
     }
+
 	@Bean
     public FilterRegistrationBean filterRegistrationBean() {
         FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean();
@@ -91,8 +93,7 @@ public class DruidConfig {
     @Primary
     public DataSource druidDataSource(){
         DruidDataSource datasource = new DruidDataSource();
-
-        datasource.setUrl(this.dbUrl);
+        datasource.setUrl(url);
         datasource.setUsername(username);
         datasource.setPassword(password);
         datasource.setDriverClassName(driverClassName);

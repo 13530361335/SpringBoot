@@ -60,3 +60,12 @@ CREATE TABLE `user_info`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+    List<FileInfo> selectByMD5(String md5);
+
+  <select id="selectByMD5" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from file_info
+    where md5 = #{md5,jdbcType=INTEGER}
+  </select>
