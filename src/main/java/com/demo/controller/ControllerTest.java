@@ -1,9 +1,7 @@
 package com.demo.controller;
 
 import com.demo.dao.FileInfoMapper;
-import com.demo.dao.UserInfoMapper;
 import com.demo.entity.FileInfo;
-import com.demo.entity.UserInfo;
 import com.demo.util.FtpUtil;
 import com.demo.web.Result;
 import io.swagger.annotations.Api;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 
 @Api(description = "快速测试")
@@ -54,12 +51,17 @@ public class ControllerTest {
         return new Result(fileInfo);
     }
 
-
     @RequestMapping(value = "redis", method = RequestMethod.GET)
     public Result redis() {
         FileInfo fileInfo = (FileInfo) redisTemplate.opsForHash().get("FileInfo", "1");
         System.out.println(fileInfo.getUploadTime());
         return new Result(fileInfo);
+    }
+
+    @RequestMapping(value = "websocket", method = RequestMethod.GET)
+    public String websocket(String message) {
+        WebSocketServer.sendInfo(message);
+        return "success";
     }
 
 }

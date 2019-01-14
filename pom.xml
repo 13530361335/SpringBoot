@@ -92,6 +92,11 @@
             <artifactId>commons-net</artifactId>
             <version>3.3</version>
         </dependency>
+        <!-- websocket -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
         <!-- 图片识别 -->
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>

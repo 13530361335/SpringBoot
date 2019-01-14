@@ -24,7 +24,7 @@ public class ORCServiceImpl implements ORCService {
         String data;
         long start = System.currentTimeMillis();
         try {
-            BufferedImage bufferedImage = ImageUtil.InputImage(file);
+            BufferedImage bufferedImage = ImageUtil.getImage(file);
             data = orcUtil.simpleAnalysis(bufferedImage);
         } catch (IOException e) {
             return new Result("Image Error");

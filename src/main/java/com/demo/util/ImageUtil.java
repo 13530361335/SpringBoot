@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class ImageUtil {
 
-    public static BufferedImage InputImage(MultipartFile file) throws IOException {
+    public static BufferedImage getImage(MultipartFile file) throws IOException {
         FileInputStream in = (FileInputStream) file.getInputStream();
         BufferedImage srcImage = ImageIO.read(in);
         return srcImage;
