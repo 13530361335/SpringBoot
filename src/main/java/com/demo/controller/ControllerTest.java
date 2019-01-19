@@ -2,6 +2,7 @@ package com.demo.controller;
 
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
+import com.demo.service.impl.TestServiceImpl;
 import com.demo.util.FtpUtil;
 import com.demo.web.Result;
 import io.swagger.annotations.Api;
@@ -63,5 +64,19 @@ public class ControllerTest {
         WebSocketServer.sendInfo(message);
         return "success";
     }
+
+    @Autowired
+    private TestServiceImpl testService;
+
+    @RequestMapping(value = "async", method = RequestMethod.GET)
+    public String async() {
+        System.out.println("####IndexController####   1");
+        testService.sendSms();
+        System.out.println("####IndexController####   4");
+        return "success";
+    }
+
+
+
 
 }
