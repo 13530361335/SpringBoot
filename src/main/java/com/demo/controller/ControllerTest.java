@@ -3,18 +3,22 @@ package com.demo.controller;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.impl.TestServiceImpl;
+import com.demo.util.EmailUtil;
 import com.demo.util.FtpUtil;
 import com.demo.web.Result;
+import com.mongodb.BasicDBObject;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
+import java.util.List;
 
 @Api(description = "快速测试")
 @RequestMapping("test")
@@ -76,7 +80,26 @@ public class ControllerTest {
         return "success";
     }
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
+    @GetMapping("/mongodb")
+    public Result getData(String id){
+        Query query = new Query();
+        Criteria criteria = Criteria.where("id").is(id);
+        query.addCriteria(criteria);
+        List<BasicDBObject> basicDBObjects =   mongoTemplate.find(query,BasicDBObject.class,"use_info");
+        return new Result<>(basicDBObjects);
+    }
+
+    @Autowired
+    private EmailUtil emailUtil;
+
+    @PostMapping("/sendEmail")
+    public Result sendEmail(String to,String subject,String content) throws Exception {
+        emailUtil.send(to,subject,content);
+        return new Result<>();
+    }
 
 
 }

@@ -25,6 +25,11 @@ public class Result<T> {
         this.data = data;
     }
 
+    public Result() {
+        this.code = 200;
+        this.message = "OK";
+    }
+
     public int getCode() {
         return code;
     }
