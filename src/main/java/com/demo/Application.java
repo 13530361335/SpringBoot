@@ -2,11 +2,19 @@ package com.demo;
 
 import com.google.common.base.Predicates;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -15,6 +23,10 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+
 @EnableSwagger2
 @EnableAsync
 @EnableScheduling
@@ -22,15 +34,44 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 public class Application {
 
+    @Value("${spring.application.name}")
+    private String appName;
+
+    @Value("${spring.application.version}")
+    private String appVersion;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * Redis配置
+     * @param factory
+     * @return
+     */
+    @Bean
+    public RedisTemplate redisTemplate(RedisConnectionFactory factory) {
+        StringRedisTemplate template = new StringRedisTemplate(factory);
+        StringRedisSerializer defaultSerializer = new StringRedisSerializer();
+        template.setKeySerializer(defaultSerializer);
+        template.setHashKeySerializer(defaultSerializer);
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return template;
+    }
+
+    /**
+     * WebSocket配置
+     * @return
+     */
     @Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
 
+    /**
+     * Swagger配置
+     * @return
+     */
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
@@ -39,12 +80,25 @@ public class Application {
                 .paths(Predicates.not(PathSelectors.regex("/error.*")))
                 .build()
                 .apiInfo(new ApiInfoBuilder()
-                        .title("REST example")
-                        .license("druid")
+                        .title(appName + "服务接口展示")
+                        .version(appVersion)
+                        .description("发布时间: " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
+                        .license("登录Druid")
                         .licenseUrl("/druid/index.html")
-                        .version("1.0")
                         .build());
     }
+
+    /**
+     * 自定义异步线程池
+     * @return
+     */
+    @Bean
+    public AsyncTaskExecutor  taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(16);
+        return executor;
+    }
+
 
 }
 

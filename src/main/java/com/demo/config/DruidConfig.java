@@ -14,6 +14,9 @@ import org.springframework.context.annotation.Primary;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
+/**
+ * Druid配置
+ */
 @Configuration
 public class DruidConfig {
 

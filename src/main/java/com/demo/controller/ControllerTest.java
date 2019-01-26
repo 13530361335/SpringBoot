@@ -5,6 +5,7 @@ import com.demo.entity.FileInfo;
 import com.demo.service.impl.TestServiceImpl;
 import com.demo.util.EmailUtil;
 import com.demo.util.FtpUtil;
+import com.demo.util.Shell;
 import com.demo.web.Result;
 import com.mongodb.BasicDBObject;
 import io.swagger.annotations.Api;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Api(description = "快速测试")
@@ -74,9 +76,8 @@ public class ControllerTest {
 
     @RequestMapping(value = "async", method = RequestMethod.GET)
     public String async() {
-        System.out.println("####IndexController####   1");
         testService.sendSms();
-        System.out.println("####IndexController####   4");
+        System.out.println("##################");
         return "success";
     }
 
@@ -100,6 +101,17 @@ public class ControllerTest {
         emailUtil.send(to,subject,content);
         return new Result<>();
     }
+
+
+    @Autowired
+    private Shell shell;
+
+    @GetMapping("/testProcess")
+    public void testProcess(){
+        shell.doSomeThing();
+    }
+
+
 
 
 }

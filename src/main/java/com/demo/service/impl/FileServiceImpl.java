@@ -6,13 +6,11 @@ import com.demo.entity.FileInfo;
 import com.demo.service.FileService;
 import com.demo.util.FtpUtil;
 import com.demo.web.Result;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,6 +29,9 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public Result<Integer> upload(MultipartFile file) throws IOException {
@@ -56,6 +57,8 @@ public class FileServiceImpl implements FileService {
             ftpUtil.upload(dir,md5,file.getInputStream());
         }
         redisTemplate.opsForHash().put("FileInfo","1",fileInfo);
+
+        rabbitTemplate.convertAndSend("file_info",fileInfo);
         return new Result<>(fileInfoMapper.insertSelective(fileInfo));
     }
 

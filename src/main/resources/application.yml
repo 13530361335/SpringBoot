@@ -15,7 +15,8 @@ mybatis:
 
 spring:
   application:
-    name: rest
+    name: SpringBoot
+    version : 0.5.0
   datasource:
     url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
@@ -68,6 +69,11 @@ spring:
       enabled: true
       additional-paths: src/main/java
       exclude: static/**,public/**
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: root
+    password: root
 
 ftp:
   host: pc-jing
@@ -79,6 +85,7 @@ email:
   smtp: smtp.163.com
   username: j150714101@163.com
   password: jm19930913
+
 
 
 

@@ -10,8 +10,7 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * @author: Joker Jing
- * @date: 2018/6/10
+ * 邮件工具类
  */
 @Component
 public class EmailUtil {
@@ -43,10 +42,10 @@ public class EmailUtil {
         session.setDebug(true);
         //创建邮件
         MimeMessage message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(username, sender, "UTF-8"));
-        message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(to, to, "UTF-8"));
-        message.setSubject(subject, "UTF-8");
-        message.setContent(content, "text/html;charset=UTF-8");
+        message.setFrom(new InternetAddress(username, sender, "utf-8"));
+        message.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(to, to, "utf-8"));
+        message.setSubject(subject, "utf-8");
+        message.setContent(content, "text/html;charset=utf-8");
         message.setSentDate(new Date());
         message.saveChanges();
         //发送邮件
