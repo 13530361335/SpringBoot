@@ -1,5 +1,6 @@
 package com.demo.controller;
 
+import com.demo.config.WebSocketServer;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.impl.TestServiceImpl;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @Api(description = "快速测试")
@@ -110,8 +110,6 @@ public class ControllerTest {
     public void testProcess(){
         shell.doSomeThing();
     }
-
-
 
 
 }

@@ -43,6 +43,7 @@ spring:
   data:
     mongodb:
       uri: mongodb://127.0.0.1:27017/demo
+
   http:
     encoding:
       charset: UTF-8
@@ -75,6 +76,8 @@ spring:
     username: root
     password: root
 
+
+
 ftp:
   host: pc-jing
   port: 21
@@ -85,6 +88,13 @@ email:
   smtp: smtp.163.com
   username: j150714101@163.com
   password: jm19930913
+
+logging:
+  level:
+    org:
+      mongodb:
+        driver: off
+
 
 
 

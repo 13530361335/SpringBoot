@@ -1,11 +1,16 @@
 package com.demo.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import io.swagger.annotations.Api;
+import org.apache.catalina.connector.Request;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,24 +21,33 @@ import java.util.*;
 @RestController
 public class AsyncController {
 
-    private static HashMap<String, ArrayList<AsyncContext>> links = new HashMap<>();
+    private final static int DEFAULT_TIME_OUT = 60 * 60 * 1000;
+
+//    private static HashMap<String, ArrayList<AsyncContext>> links = new HashMap<>();
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @GetMapping("connect")
     public void connect(HttpServletRequest request, HttpServletResponse response, String key) {
-        response.setContentType("text/event");//持续响应
-        ArrayList<AsyncContext> asyncContexts = links.get(key);
+        ArrayList<AsyncContext> asyncContexts = (ArrayList<AsyncContext>) redisTemplate.opsForHash().get("AsyncContext",key);
+//        ArrayList<AsyncContext> asyncContexts = links.get(key);
         if (CollectionUtils.isEmpty(asyncContexts)) {
             asyncContexts = new ArrayList<>();
-            links.put(key, asyncContexts);
+//            links.put(key, asyncContexts);
         }
+        request.getAsyncContext();
+        response.setContentType("text/event");//持续响应
         AsyncContext asyncContext = request.startAsync();//异步请求
-        asyncContext.setTimeout(10000);
         asyncContexts.add(asyncContext);
+
+        redisTemplate.opsForHash().put("AsyncContext",key,new HttpServletRequestWrapper(request));
     }
 
     @GetMapping("push")
     public String push(String key, String message){
-        List<AsyncContext> asyncContexts = links.get(key);
+//        List<AsyncContext> asyncContexts = links.get(key);
+        List<AsyncContext> asyncContexts =  (ArrayList<AsyncContext>) redisTemplate.opsForHash().get("AsyncContext",key);
         int total = asyncContexts == null ? 0 : asyncContexts.size();
         int success = 0;
         if (total == 0) {
@@ -43,7 +57,8 @@ public class AsyncController {
             for (AsyncContext asyncContext : asyncContexts) {
                 asyncContext.complete();
             }
-            links.remove(key);
+            redisTemplate.opsForHash().delete("AsyncContext",key);
+//            links.remove(key);
             return "关闭连接:" + total;
         }
         for (AsyncContext asyncContext : asyncContexts) {
@@ -57,6 +72,7 @@ public class AsyncController {
                 asyncContexts.remove(asyncContext);
             }
         }
+        redisTemplate.opsForHash().put("AsyncContext",key,asyncContexts);
         return "连接总数:" + total + ";推送成功:" + success;
     }
 

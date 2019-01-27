@@ -1,4 +1,4 @@
-package com.demo.controller;
+package com.demo.config;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
