@@ -2,6 +2,9 @@ package com.demo;
 
 import com.google.common.base.Predicates;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,6 +48,17 @@ public class Application {
     }
 
     /**
+     * 自定义异步线程池
+     * @return
+     */
+    @Bean
+    public AsyncTaskExecutor  taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(16);
+        return executor;
+    }
+
+    /**
      * Redis配置
      * @param factory
      * @return
@@ -59,13 +73,11 @@ public class Application {
         return template;
     }
 
-    /**
-     * WebSocket配置
-     * @return
-     */
     @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
+    public RabbitTemplate rabbitTemplate(ConnectionFactory factory) {
+        RabbitTemplate template = new RabbitTemplate(factory);
+        template.setMessageConverter(new Jackson2JsonMessageConverter());
+        return template;
     }
 
     /**
@@ -88,16 +100,17 @@ public class Application {
                         .build());
     }
 
+
     /**
-     * 自定义异步线程池
+     * WebSocket配置
      * @return
      */
     @Bean
-    public AsyncTaskExecutor  taskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(16);
-        return executor;
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
     }
+
+
 
 
 }

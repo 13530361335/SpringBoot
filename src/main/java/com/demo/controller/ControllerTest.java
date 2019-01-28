@@ -8,6 +8,8 @@ import com.demo.util.EmailUtil;
 import com.demo.util.FtpUtil;
 import com.demo.util.Shell;
 import com.demo.web.Result;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.mongodb.BasicDBObject;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +56,10 @@ public class ControllerTest {
 
     @RequestMapping(value = "sql", method = RequestMethod.GET)
     public Result sql() {
-        FileInfo fileInfo = fileInfoMapper.selectByPrimaryKey(25);
-        return new Result(fileInfo);
+        PageHelper.startPage(1,2);
+        List<FileInfo> fileInfos =fileInfoMapper.selectByMD5("da117cfd0f948dd564194d9d6032ab3b");
+        PageInfo<FileInfo> pageInfo = new PageInfo<>(fileInfos);
+        return new Result(fileInfos);
     }
 
     @RequestMapping(value = "redis", method = RequestMethod.GET)

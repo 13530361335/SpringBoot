@@ -33,7 +33,6 @@ public class RequestAspect {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    //申明一个切点 里面是 execution表达式
     @Pointcut("execution(public * com.demo.controller..*.*(..))")
     private void controllerAspect() {
     }
@@ -63,13 +62,10 @@ public class RequestAspect {
      */
     private BasicDBObject getBasicDBObject(HttpServletRequest request, JoinPoint joinPoint) {
         BasicDBObject r = new BasicDBObject();
-        // 快速复现
         r.append("requestURL", request.getRequestURL().toString());
         r.append("requestMethod", request.getMethod());
         r.append("queryString", request.getQueryString());
         r.append("parameters", joinPoint.getArgs());
-
-        // 权限控制
         r.append("requestURI", request.getRequestURI());
         r.append("clientAddr", request.getRemoteAddr());
         r.append("clientHost", request.getRemoteHost());
@@ -77,8 +73,6 @@ public class RequestAspect {
         r.append("serverAddr", request.getLocalAddr());
         r.append("serverName", request.getLocalName());
         r.append("headers", getHeaders(request));
-
-        // 快速定位
         r.append("method", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         r.append("args", Arrays.toString(joinPoint.getArgs()));
         return r;

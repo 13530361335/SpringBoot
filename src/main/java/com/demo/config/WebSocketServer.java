@@ -10,6 +10,8 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 //@ServerEndpoint("/websocket/{userId}")
@@ -18,6 +20,10 @@ import org.springframework.stereotype.Component;
 public class WebSocketServer {
 
     private static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
+
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
@@ -36,6 +42,7 @@ public class WebSocketServer {
         webSocketSet.add(this);     //加入set中
         addOnlineCount();           //在线数加1
         log.info("有新连接加入！当前在线人数为" + getOnlineCount());
+        redisTemplate.opsForHash().put("session","id",session);
         try {
         	 sendMessage("连接成功");
         } catch (IOException e) {
