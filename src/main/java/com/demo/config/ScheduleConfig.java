@@ -6,9 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 
-/**
- * 定时任务
- */
 @Configuration
 public class ScheduleConfig {
 
@@ -29,7 +26,7 @@ public class ScheduleConfig {
         log.info("初始执行,间隔1H");
     }
 
-    @Scheduled(initialDelay=1000, fixedRate=5000)
+    @Scheduled(initialDelay = 1000, fixedRate = 5000)
     public void doSomething() {
         // something that should execute periodically
     }

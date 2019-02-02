@@ -28,8 +28,6 @@ public class RequestAspect {
 
     private Logger log = LoggerFactory.getLogger(RequestAspect.class);
 
-    private Map<String, String> json = new HashMap<>();
-
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -65,13 +63,9 @@ public class RequestAspect {
         r.append("requestURL", request.getRequestURL().toString());
         r.append("requestMethod", request.getMethod());
         r.append("queryString", request.getQueryString());
-        r.append("parameters", joinPoint.getArgs());
         r.append("requestURI", request.getRequestURI());
         r.append("clientAddr", request.getRemoteAddr());
-        r.append("clientHost", request.getRemoteHost());
-        r.append("clientPort", request.getRemotePort());
         r.append("serverAddr", request.getLocalAddr());
-        r.append("serverName", request.getLocalName());
         r.append("headers", getHeaders(request));
         r.append("method", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
         r.append("args", Arrays.toString(joinPoint.getArgs()));

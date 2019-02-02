@@ -38,35 +38,14 @@ public class DruidConfig {
     @Value("${spring.datasource.initialSize}")
     private int initialSize;
 
-    @Value("${spring.datasource.minIdle}")
-    private int minIdle;
-
     @Value("${spring.datasource.maxActive}")
     private int maxActive;
 
     @Value("${spring.datasource.maxWait}")
     private int maxWait;
 
-    @Value("${spring.datasource.timeBetweenEvictionRunsMillis}")
-    private int timeBetweenEvictionRunsMillis;
-
-    @Value("${spring.datasource.minEvictableIdleTimeMillis}")
-    private int minEvictableIdleTimeMillis;
-
     @Value("${spring.datasource.validationQuery}")
     private String validationQuery;
-
-    @Value("${spring.datasource.testWhileIdle}")
-    private boolean testWhileIdle;
-
-    @Value("${spring.datasource.testOnBorrow}")
-    private boolean testOnBorrow;
-
-    @Value("${spring.datasource.testOnReturn}")
-    private boolean testOnReturn;
-
-    @Value("${spring.datasource.poolPreparedStatements}")
-    private boolean poolPreparedStatements;
 
     @Value("${spring.datasource.filters}")
     private String filters;
@@ -102,16 +81,9 @@ public class DruidConfig {
         d.setPassword(password);
         d.setDriverClassName(driverClassName);
         d.setInitialSize(initialSize);
-        d.setMinIdle(minIdle);
         d.setMaxActive(maxActive);
         d.setMaxWait(maxWait);
-        d.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
-        d.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
         d.setValidationQuery(validationQuery);
-        d.setTestWhileIdle(testWhileIdle);
-        d.setTestOnBorrow(testOnBorrow);
-        d.setTestOnReturn(testOnReturn);
-        d.setPoolPreparedStatements(poolPreparedStatements);
         try {
             d.setFilters(filters);
         } catch (SQLException e) {

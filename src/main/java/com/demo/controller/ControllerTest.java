@@ -4,7 +4,6 @@ import com.demo.config.WebSocketServer;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.impl.TestServiceImpl;
-import com.demo.util.EmailUtil;
 import com.demo.util.FtpUtil;
 import com.demo.util.Shell;
 import com.demo.web.Result;
@@ -12,15 +11,20 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mongodb.BasicDBObject;
 import io.swagger.annotations.Api;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,6 +32,8 @@ import java.util.List;
 @RequestMapping("test")
 @RestController
 public class ControllerTest {
+
+    private static Logger log = LoggerFactory.getLogger(ControllerTest.class);
 
     @Value("${server.port}")
     int port;
@@ -59,7 +65,7 @@ public class ControllerTest {
         PageHelper.startPage(1,2);
         List<FileInfo> fileInfos =fileInfoMapper.selectByMD5("da117cfd0f948dd564194d9d6032ab3b");
         PageInfo<FileInfo> pageInfo = new PageInfo<>(fileInfos);
-        return new Result(fileInfos);
+        return new Result(pageInfo);
     }
 
     @RequestMapping(value = "redis", method = RequestMethod.GET)
@@ -97,15 +103,6 @@ public class ControllerTest {
         return new Result<>(basicDBObjects);
     }
 
-    @Autowired
-    private EmailUtil emailUtil;
-
-    @PostMapping("/sendEmail")
-    public Result sendEmail(String to,String subject,String content) throws Exception {
-        emailUtil.send(to,subject,content);
-        return new Result<>();
-    }
-
 
     @Autowired
     private Shell shell;
@@ -115,5 +112,26 @@ public class ControllerTest {
         shell.doSomeThing();
     }
 
+    @PostMapping("/testBody")
+    public Result testProcess(@RequestBody FileInfo fileInfo){
+       return new Result();
+    }
+
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+   @Value("${spring.mail.username}")
+   private String from;
+
+    @PostMapping("/sendEmail2")
+    public void sendSimpleMail(String to, String subject, String content) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(content);
+        mailSender.send(message);
+    }
 
 }
