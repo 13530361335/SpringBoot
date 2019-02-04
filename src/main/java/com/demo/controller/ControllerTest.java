@@ -1,10 +1,11 @@
 package com.demo.controller;
 
+import com.demo.config.FtpTemplate;
 import com.demo.config.WebSocketServer;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.impl.TestServiceImpl;
-import com.demo.util.FtpUtil;
+import com.demo.util.HttpUtil;
 import com.demo.util.Shell;
 import com.demo.web.Result;
 import com.github.pagehelper.PageHelper;
@@ -24,7 +25,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -33,13 +35,10 @@ import java.util.List;
 @RestController
 public class ControllerTest {
 
-    private static Logger log = LoggerFactory.getLogger(ControllerTest.class);
+    private final static Logger log = LoggerFactory.getLogger(ControllerTest.class);
 
     @Value("${server.port}")
     int port;
-
-    @Autowired
-    private FtpUtil ftpUtil;
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
@@ -56,7 +55,7 @@ public class ControllerTest {
     public String upload(MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
         String dir = "/2018-12-31";
-        ftpUtil.upload(dir, fileName, file.getInputStream());
+        ftpTemplate.upload(dir, fileName, file.getInputStream());
         return "success";
     }
 
@@ -133,5 +132,22 @@ public class ControllerTest {
         message.setText(content);
         mailSender.send(message);
     }
+
+
+    @Autowired
+    FtpTemplate ftpTemplate;
+
+
+    @GetMapping("/download")
+    public void download(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpUtil.setDownHeader(request,response,"123.mp3");
+        ftpTemplate.download("/2019-02-04","2ac1e883997597e65f3f4a38183b5700",response.getOutputStream());
+    }
+
+    @GetMapping("/delete")
+    public void delete(HttpServletRequest request, HttpServletResponse response){
+        ftpTemplate.delete("/2019-02-04","8eb4b080efea1cac3597d8096f79f749");
+    }
+
 
 }

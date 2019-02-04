@@ -9,7 +9,7 @@ import java.util.stream.IntStream;
 @Component
 public class TestServiceImpl {
 
-    private static Logger log = LoggerFactory.getLogger(TestServiceImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(TestServiceImpl.class);
 
     @Async
     public void sendSms() {

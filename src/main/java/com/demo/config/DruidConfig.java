@@ -21,7 +21,7 @@ import java.sql.SQLException;
 @Configuration
 public class DruidConfig {
 
-    private static Logger log = LoggerFactory.getLogger(DruidConfig.class);
+    private  static Logger log = LoggerFactory.getLogger(DruidConfig.class);
 
     @Value("${spring.datasource.url}")
     private String url;
@@ -51,6 +51,26 @@ public class DruidConfig {
     private String filters;
 
     @Bean
+    @Primary
+    public DataSource druidDataSource() {
+        DruidDataSource d = new DruidDataSource();
+        d.setUrl(url);
+        d.setUsername(username);
+        d.setPassword(password);
+        d.setDriverClassName(driverClassName);
+        d.setInitialSize(initialSize);
+        d.setMaxActive(maxActive);
+        d.setMaxWait(maxWait);
+        d.setValidationQuery(validationQuery);
+        try {
+            d.setFilters(filters);
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+        }
+        return d;
+    }
+
+    @Bean
     public ServletRegistrationBean druidServlet() {
         ServletRegistrationBean s = new ServletRegistrationBean();
         s.setServlet(new StatViewServlet());
@@ -72,24 +92,6 @@ public class DruidConfig {
         return f;
     }
 
-    @Bean
-    @Primary
-    public DataSource druidDataSource() {
-        DruidDataSource d = new DruidDataSource();
-        d.setUrl(url);
-        d.setUsername(username);
-        d.setPassword(password);
-        d.setDriverClassName(driverClassName);
-        d.setInitialSize(initialSize);
-        d.setMaxActive(maxActive);
-        d.setMaxWait(maxWait);
-        d.setValidationQuery(validationQuery);
-        try {
-            d.setFilters(filters);
-        } catch (SQLException e) {
-            log.error(e.getMessage());
-        }
-        return d;
-    }
+
 
 }

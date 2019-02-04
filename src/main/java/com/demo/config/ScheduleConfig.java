@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class ScheduleConfig {
 
     @Autowired
-    private static Logger log = LoggerFactory.getLogger(ScheduleConfig.class);
+    private final static Logger log = LoggerFactory.getLogger(ScheduleConfig.class);
 
     public final static long ONE_DAY = 24 * 60 * 60 * 1000;
 

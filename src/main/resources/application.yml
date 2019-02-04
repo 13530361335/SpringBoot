@@ -59,12 +59,18 @@ ftp:
   host: pc-jing
   port: 21
   username: 761878367@qq.com
-  password:
+  password: jm19930913.
+  controlEncoding: utf-8
+  passiveMode: false
+
+
 
 logging:
   level:
     com.demo.dao: debug
     org.mongodb.driver: off
+  pattern:
+    dateformat: 'yy-MM-dd HH:mm:ss'
 
 
 

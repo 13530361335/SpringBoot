@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebSocketServer {
 
-    private static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
+    private final static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
 
     @Autowired

@@ -1,5 +1,7 @@
 package com.demo;
 
+import com.demo.config.FtpFactory;
+import com.demo.config.FtpTemplate;
 import com.google.common.base.Predicates;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -14,6 +16,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -54,7 +57,9 @@ public class Application {
     @Bean
     public AsyncTaskExecutor  taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(16);
+        executor.setCorePoolSize(8);
+        executor.setMaxPoolSize(16);
+        executor.setQueueCapacity(10);
         return executor;
     }
 
@@ -66,10 +71,12 @@ public class Application {
     @Bean
     public RedisTemplate redisTemplate(RedisConnectionFactory factory) {
         StringRedisTemplate template = new StringRedisTemplate(factory);
-        StringRedisSerializer defaultSerializer = new StringRedisSerializer();
-        template.setKeySerializer(defaultSerializer);
-        template.setHashKeySerializer(defaultSerializer);
-        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        RedisSerializer strSerializer = new StringRedisSerializer();
+        RedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer();
+        template.setKeySerializer(strSerializer);
+        template.setHashKeySerializer(strSerializer);
+        template.setValueSerializer(jsonSerializer);
+        template.setHashValueSerializer(jsonSerializer);
         return template;
     }
 
@@ -79,6 +86,14 @@ public class Application {
         template.setMessageConverter(new Jackson2JsonMessageConverter());
         return template;
     }
+
+
+//    @Bean
+//    public FtpTemplate ftpTemplate(FtpFactory factory) {
+//        System.out.println("ftpTemplate()");
+//        FtpTemplate template = new FtpTemplate(factory);
+//        return template;
+//    }
 
     /**
      * Swagger配置

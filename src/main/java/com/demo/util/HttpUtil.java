@@ -20,9 +20,8 @@ public class HttpUtil {
      */
     public static boolean setDownHeader(HttpServletRequest request, HttpServletResponse response, String fileName) {
         response.setHeader("Content-Type", "application/octet-stream");
-        boolean isIE = isIEBrowser(request);
         try {
-            if (isIE) {
+            if (isIEBrowser(request)) {
                 //解决IE浏览器下载时文件名乱码，以及空格和加号问题
                 fileName = URLEncoder.encode(fileName, "utf-8").replaceAll("\\+", "%20");
             } else {

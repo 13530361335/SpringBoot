@@ -1,10 +1,10 @@
 package com.demo.service.impl;
 
 
+import com.demo.config.FtpTemplate;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.FileService;
-import com.demo.util.FtpUtil;
 import com.demo.web.Result;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,6 @@ import java.util.List;
 public class FileServiceImpl implements FileService {
 
     @Autowired
-    private FtpUtil ftpUtil;
-
-    @Autowired
     private FileInfoMapper fileInfoMapper;
 
     @Autowired
@@ -33,32 +30,35 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    private FtpTemplate ftpTemplate;
+
     @Override
     public Result<Integer> upload(MultipartFile file) throws IOException {
         String md5 = DigestUtils.md5DigestAsHex(file.getInputStream());
-        long size =  file.getSize();
+        long size = file.getSize();
         String fileName = file.getOriginalFilename();
-        String type = fileName.substring(fileName.lastIndexOf("."),fileName.length());
+        String type = fileName.substring(fileName.lastIndexOf("."));
         List<FileInfo> fileInfos = fileInfoMapper.selectByMD5(md5);
         boolean flag = false;
-        FileInfo fileInfo = new FileInfo(md5,fileName,size,type,new Date());
-        if(fileInfos.size() > 0){
-            for (FileInfo info :fileInfos) {
-               if(info.getSize().equals(size) && info.getMd5().equals(md5)){
-                   fileInfo.setUploadTime(info.getUploadTime());
-                   flag = true;
-                   break;
-               }
+        FileInfo fileInfo = new FileInfo(md5, fileName, size, type, new Date());
+        if (fileInfos.size() > 0) {
+            for (FileInfo info : fileInfos) {
+                if (info.getSize().equals(size) && info.getMd5().equals(md5)) {
+                    fileInfo.setUploadTime(info.getUploadTime());
+                    flag = true;
+                    break;
+                }
             }
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dir = sdf.format(fileInfo.getUploadTime());
-        if(!flag){
-            ftpUtil.upload(dir,md5,file.getInputStream());
+        String dir = "/" + sdf.format(fileInfo.getUploadTime());
+        if (!flag) {
+            ftpTemplate.upload(dir, md5, file.getInputStream());
         }
-        redisTemplate.opsForHash().put("FileInfo","1",fileInfo);
+        redisTemplate.opsForHash().put("FileInfo", "1", fileInfo);
 
-        rabbitTemplate.convertAndSend("file_info",fileInfo);
+        rabbitTemplate.convertAndSend("file_info", fileInfo);
         return new Result<>(fileInfoMapper.insertSelective(fileInfo));
     }
 
