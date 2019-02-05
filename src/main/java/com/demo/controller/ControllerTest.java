@@ -62,7 +62,7 @@ public class ControllerTest {
     @RequestMapping(value = "sql", method = RequestMethod.GET)
     public Result sql() {
         PageHelper.startPage(1,2);
-        List<FileInfo> fileInfos =fileInfoMapper.selectByMD5("da117cfd0f948dd564194d9d6032ab3b");
+        List<FileInfo> fileInfos =fileInfoMapper.selectAll();
         PageInfo<FileInfo> pageInfo = new PageInfo<>(fileInfos);
         return new Result(pageInfo);
     }

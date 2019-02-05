@@ -3,8 +3,11 @@ package com.demo.service.impl;
 
 import com.demo.config.FtpTemplate;
 import com.demo.dao.FileInfoMapper;
+import com.demo.dao.FileKeyMapper;
 import com.demo.entity.FileInfo;
+import com.demo.entity.FileKey;
 import com.demo.service.FileService;
+import com.demo.util.HttpUtil;
 import com.demo.web.Result;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +16,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 @Service
 public class FileServiceImpl implements FileService {
+
+    @Autowired
+    private FileKeyMapper fileKeyMapper;
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
@@ -39,37 +46,29 @@ public class FileServiceImpl implements FileService {
         long size = file.getSize();
         String fileName = file.getOriginalFilename();
         String type = fileName.substring(fileName.lastIndexOf("."));
-        List<FileInfo> fileInfos = fileInfoMapper.selectByMD5(md5);
-        boolean flag = false;
-        FileInfo fileInfo = new FileInfo(md5, fileName, size, type, new Date());
-        if (fileInfos.size() > 0) {
-            for (FileInfo info : fileInfos) {
-                if (info.getSize().equals(size) && info.getMd5().equals(md5)) {
-                    fileInfo.setUploadTime(info.getUploadTime());
-                    flag = true;
-                    break;
-                }
-            }
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dir = "/" + sdf.format(fileInfo.getUploadTime());
-        if (!flag) {
+        String dir = "/" + new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        FileKey fileKey = fileKeyMapper.selectByMD5AndSize(md5, (int) size);
+
+        if (null == fileKey) {  //需上传
             ftpTemplate.upload(dir, md5, file.getInputStream());
+            fileKeyMapper.insert(new FileKey(md5, (int) size, dir));
         }
-        redisTemplate.opsForHash().put("FileInfo", "1", fileInfo);
-
-        rabbitTemplate.convertAndSend("file_info", fileInfo);
-        return new Result<>(fileInfoMapper.insertSelective(fileInfo));
+        int keyId = fileKeyMapper.selectByMD5AndSize(md5, (int) size).getId();
+        return new Result<>(fileInfoMapper.insertSelective(new FileInfo(keyId, fileName, new Date(), type, size)));
     }
 
     @Override
-    public void download(int id) {
-
+    public void download(HttpServletRequest request, HttpServletResponse response, int id) throws IOException {
+        FileInfo fileInfo = fileInfoMapper.selectByPrimaryKey(id);
+        FileKey fileKey = fileKeyMapper.selectByPrimaryKey(fileInfo.getKeyId());
+        HttpUtil.setDownHeader(request,response,fileInfo.getFileName());
+        ftpTemplate.download(fileKey.getDir(), fileKey.getMd5(), response.getOutputStream());
     }
 
     @Override
-    public void delete(int id) {
-
+    public Result<Integer> delete(int id) {
+        return new Result(fileInfoMapper.deleteByPrimaryKey(id));
     }
 
 }

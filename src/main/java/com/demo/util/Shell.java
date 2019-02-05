@@ -12,11 +12,10 @@ public class Shell {
 
     @Async
     public void doSomeThing() {
-        Process process = null;
+        Process process;
         try {
             process = Runtime.getRuntime().exec("ping baidu.com");
             process.waitFor();
-            System.out.println(1);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

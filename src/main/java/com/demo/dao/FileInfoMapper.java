@@ -5,6 +5,7 @@ import com.demo.entity.FileInfo;
 import java.util.List;
 
 public interface FileInfoMapper {
+
     int deleteByPrimaryKey(Integer id);
 
     int insert(FileInfo record);
@@ -17,5 +18,5 @@ public interface FileInfoMapper {
 
     int updateByPrimaryKey(FileInfo record);
 
-    List<FileInfo> selectByMD5(String md5);
+    List<FileInfo> selectAll();
 }

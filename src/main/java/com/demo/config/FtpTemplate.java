@@ -19,6 +19,7 @@ public class FtpTemplate {
 
     public FtpTemplate(FtpFactory ftpFactory) {
         ftpClientPool = new GenericObjectPool<>(ftpFactory);
+        System.out.println("FtpTemplate()");
     }
 
     /**
@@ -31,7 +32,7 @@ public class FtpTemplate {
      */
     public boolean upload(String remoteDir, String fileName, InputStream in) {
         FTPClient ftpClient = null;
-        BufferedInputStream bufferedIn = null;
+        BufferedInputStream bufferedIn;
         try {
             ftpClient = ftpClientPool.borrowObject();
             bufferedIn = new BufferedInputStream(in);
@@ -50,7 +51,7 @@ public class FtpTemplate {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            IOUtils.closeQuietly(bufferedIn);
+            IOUtils.closeQuietly(in);
             ftpClientPool.returnObject(ftpClient);//将对象放回池中
         }
         return false;
@@ -66,7 +67,7 @@ public class FtpTemplate {
      */
     public boolean download(String remoteDir, String fileName, OutputStream out) {
         FTPClient ftpClient = null;
-        BufferedOutputStream bufferedOut = null;
+        BufferedOutputStream bufferedOut;
         try {
             ftpClient = ftpClientPool.borrowObject();
             bufferedOut = new BufferedOutputStream(out);
@@ -82,7 +83,7 @@ public class FtpTemplate {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
-            IOUtils.closeQuietly(bufferedOut);
+            IOUtils.closeQuietly(out);
             ftpClientPool.returnObject(ftpClient);
         }
         return false;

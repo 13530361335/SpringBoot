@@ -1,0 +1,156 @@
+<!DOCTYPE html >
+<html lang="zh-CN" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="keyword" content="关键字1，关键字2">
+    <meta name="description" content="描述，搜索引擎相关">
+    <title>Title</title>
+    <script th:src="@{/bootstrap-3.3.7/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap-theme.min.css}">
+
+</head>
+<body>
+<table class="table">
+    <tr>
+        <td>文件名</td>
+        <td>上传时间</td>
+        <td>文件类型</td>
+        <td>文件大小</td>
+        <td>操作</td>
+    </tr>
+    <tr th:each="file : ${pageInfo.list}">
+        <td th:text="${file.fileName}"></td>
+        <td th:text="${#dates.format(file.uploadTime,'yyyy/MM/dd HH:mm')}"></td>
+        <td th:text="${file.type}"></td>
+        <td th:text="${file.size}"></td>
+        <td><a th:href="'/file/download/' + ${file.id}">下载</a> &nbsp;&nbsp;
+            <button th:onclick="'deleteFile(' + ${file.id} + ')'">删除</button>
+        </td>
+    </tr>
+</table>
+
+<p th:text="${pageInfo}"></p>
+
+
+<input id="upload" type="file">
+<button onclick="upload()">上传</button>
+
+
+<script>
+    /**
+     * 文件大小转化为字符串
+     * @param size
+     * @returns {*}
+     */
+    function sizeToStr(size) {
+        var sizeStr = "";
+        if (size < 0.1 * 1024) {                                     //如果小于0.1KB转化成B
+            sizeStr = size.toFixed(2) + "B";
+        } else if (size < 0.1 * 1024 * 1024) {                        //如果小于0.1MB转化成KB
+            sizeStr = (size / 1024).toFixed(2) + "KB";
+        } else if (size < 0.1 * 1024 * 1024 * 1024) {                  //如果小于0.1GB转化成MB
+            sizeStr = (size / (1024 * 1024)).toFixed(2) + "MB";
+        } else { //其他转化成GB
+            sizeStr = (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+        }
+        sizeStr += "";
+        var len = sizeStr.indexOf("\.");
+        var dec = sizeStr.substr(len + 1, 2);
+        if (dec == "00") {                                             //当小数点后为00时 去掉小数部分
+            return sizeStr.substring(0, len) + sizeStr.substr(len + 3, 2);
+        }
+        return sizeStr;
+    }
+
+    /**
+     * @param id       input元素id
+     * @param url      上传的服务器地址，即控制层地址
+     * @param maxSize  maxSize=1024 即为1KB
+     */
+    function upload() {
+        var id = "upload";
+        var url = "/file/upload";
+        var maxSize = 1024 * 1024 * 10;
+        if (!isNum(maxSize)) {
+            maxSize = 1024 * 1024;
+        }
+        var formData = new FormData();
+        var file = document.getElementById(id);
+        var fileObj;
+        try {
+            fileObj = file.files[0];
+        } catch (e) {
+            fileObj = file;
+        }
+        if (fileObj) {
+            console.log(fileObj.size)
+            if (fileObj.size > maxSize) {
+                alert("上传文件最大为" + sizeToStr(maxSize));
+                cleanFile(file);
+                return;
+            }
+            formData.append("file", fileObj);
+            $.ajax({
+                url: url,
+                type: 'post',
+                data: formData,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    alert(data.message);
+                    location.reload();
+                    cleanFile(file);
+                }
+            })
+        } else {
+            alert("请选择文件");
+        }
+    }
+
+    function deleteFile(id) {
+        $.ajax({
+            url: "/file/delete/" + id,
+            success: function () {
+                location.reload();
+            }
+        });
+    }
+
+    /**
+     * 判断对象是否为数字 或 数字字符串
+     * @param val
+     * @returns {boolean}
+     */
+    function isNum(val) {
+        if (val === "" || val == null) {
+            return false;
+        }
+        if (!isNaN(val)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 清空文件
+     * @param file 文件对象
+     */
+    function cleanFile(file) {
+        // for IE, Opera, Safari, Chrome
+        if (file.outerHTML) {
+            file.outerHTML = file.outerHTML;
+        } else { // FF(包括3.5)
+            file.value = "";
+        }
+    }
+</script>
+
+</body>
+</html>

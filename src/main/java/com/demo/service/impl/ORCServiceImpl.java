@@ -1,14 +1,13 @@
 package com.demo.service.impl;
 
 import com.demo.service.ORCService;
-import com.demo.util.ImageUtil;
 import com.demo.util.ORCUtil;
 import com.demo.web.Result;
 import net.sourceforge.tess4j.TesseractException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.awt.image.BufferedImage;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +23,7 @@ public class ORCServiceImpl implements ORCService {
         String data;
         long start = System.currentTimeMillis();
         try {
-            BufferedImage bufferedImage = ImageUtil.getImage(file);
-            data = orcUtil.simpleAnalysis(bufferedImage);
+            data = orcUtil.simpleAnalysis(file.getInputStream());
         } catch (IOException e) {
             return new Result("Image Error");
         } catch (TesseractException e) {

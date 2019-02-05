@@ -5,25 +5,25 @@ import java.util.Date;
 public class FileInfo {
     private Integer id;
 
-    private String md5;
+    private Integer keyId;
 
     private String fileName;
 
-    private Long size;
+    private Date uploadTime;
 
     private String type;
 
-    private Date uploadTime;
+    private Long size;
 
-    public FileInfo(){
+    public FileInfo() {
     }
 
-    public FileInfo(String md5, String fileName, Long size, String type, Date uploadTime) {
-        this.md5 = md5;
+    public FileInfo(Integer keyId, String fileName, Date uploadTime, String type, Long size) {
+        this.keyId = keyId;
         this.fileName = fileName;
-        this.size = size;
-        this.type = type;
         this.uploadTime = uploadTime;
+        this.type = type;
+        this.size = size;
     }
 
     public Integer getId() {
@@ -34,12 +34,12 @@ public class FileInfo {
         this.id = id;
     }
 
-    public String getMd5() {
-        return md5;
+    public Integer getKeyId() {
+        return keyId;
     }
 
-    public void setMd5(String md5) {
-        this.md5 = md5;
+    public void setKeyId(Integer keyId) {
+        this.keyId = keyId;
     }
 
     public String getFileName() {
@@ -50,12 +50,12 @@ public class FileInfo {
         this.fileName = fileName;
     }
 
-    public Long getSize() {
-        return size;
+    public Date getUploadTime() {
+        return uploadTime;
     }
 
-    public void setSize(Long size) {
-        this.size = size;
+    public void setUploadTime(Date uploadTime) {
+        this.uploadTime = uploadTime;
     }
 
     public String getType() {
@@ -66,11 +66,11 @@ public class FileInfo {
         this.type = type;
     }
 
-    public Date getUploadTime() {
-        return uploadTime;
+    public Long getSize() {
+        return size;
     }
 
-    public void setUploadTime(Date uploadTime) {
-        this.uploadTime = uploadTime;
+    public void setSize(Long size) {
+        this.size = size;
     }
 }
