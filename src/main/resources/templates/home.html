@@ -12,33 +12,69 @@
     <script th:src="@{/bootstrap-3.3.7/js/bootstrap.min.js}"></script>
     <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/bootstrap-3.3.7/css/bootstrap-theme.min.css}">
-
 </head>
 <body>
-<table class="table">
-    <tr>
-        <td>文件名</td>
-        <td>上传时间</td>
-        <td>文件类型</td>
-        <td>文件大小</td>
-        <td>操作</td>
-    </tr>
-    <tr th:each="file : ${pageInfo.list}">
-        <td th:text="${file.fileName}"></td>
-        <td th:text="${#dates.format(file.uploadTime,'yyyy/MM/dd HH:mm')}"></td>
-        <td th:text="${file.type}"></td>
-        <td th:text="${file.size}"></td>
-        <td><a th:href="'/file/download/' + ${file.id}">下载</a> &nbsp;&nbsp;
-            <button th:onclick="'deleteFile(' + ${file.id} + ')'">删除</button>
-        </td>
-    </tr>
-</table>
+<div id="table_refresh" style="text-align: center;margin:0 auto;width: 900px" th:fragment="table_refresh">
+    <table class="table">
+        <tr>
+            <td>文件名</td>
+            <td>上传时间</td>
+            <td>文件类型</td>
+            <td>文件大小</td>
+            <td>操作</td>
+        </tr>
+        <tr th:each="file : ${pageInfo.list}">
+            <td th:text="${file.fileName}"></td>
+            <td th:text="${#dates.format(file.uploadTime,'yyyy/MM/dd HH:mm')}"></td>
+            <td th:text="${file.type}"></td>
+            <td th:text="${file.size}"></td>
+            <td><a th:href="'/file/download/' + ${file.id}">下载</a> &nbsp;&nbsp;
+                <button th:onclick="'deleteFile(' + ${file.id} + ')'">删除</button>
+            </td>
+        </tr>
+    </table>
+    <p th:text="${pageInfo}"></p>
 
-<p th:text="${pageInfo}"></p>
+    <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="true">
+            Dropdown
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+        </ul>
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li>
+                <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+
+            <li th:each="pageNum : ${pageInfo.navigatepageNums}">
+                <a th:text="${pageNum}"></a>
+            </li>
+
+            <li>
+                <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
 
 <input id="upload" type="file">
 <button onclick="upload()">上传</button>
+<button onclick="localRefresh()">刷新</button>
 
 
 <script>
@@ -103,8 +139,7 @@
                 processData: false,
                 contentType: false,
                 success: function (data) {
-                    alert(data.message);
-                    location.reload();
+                    localRefresh();
                     cleanFile(file);
                 }
             })
@@ -117,7 +152,7 @@
         $.ajax({
             url: "/file/delete/" + id,
             success: function () {
-                location.reload();
+                localRefresh();
             }
         });
     }
@@ -149,6 +184,16 @@
         } else { // FF(包括3.5)
             file.value = "";
         }
+    }
+
+    function localRefresh() {
+        // 装载局部刷新返回的页面
+        $('#table_refresh').load("/file/list");
+    }
+
+    $(".pagination > li").onclick = function () {
+        var pageNum = this.text;
+        console.log(pageNum);
     }
 </script>
 
