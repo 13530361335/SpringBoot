@@ -86,14 +86,7 @@ public class Application {
         template.setMessageConverter(new Jackson2JsonMessageConverter());
         return template;
     }
-
-
-//    @Bean
-//    public FtpTemplate ftpTemplate(FtpFactory factory) {
-//        System.out.println("ftpTemplate()");
-//        FtpTemplate template = new FtpTemplate(factory);
-//        return template;
-//    }
+    
 
     /**
      * Swagger配置

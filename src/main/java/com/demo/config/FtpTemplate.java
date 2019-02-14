@@ -19,7 +19,6 @@ public class FtpTemplate {
 
     public FtpTemplate(FtpFactory ftpFactory) {
         ftpClientPool = new GenericObjectPool<>(ftpFactory);
-        System.out.println("FtpTemplate()");
     }
 
     /**
@@ -36,7 +35,6 @@ public class FtpTemplate {
         try {
             ftpClient = ftpClientPool.borrowObject();
             bufferedIn = new BufferedInputStream(in);
-
             if (!ftpClient.changeWorkingDirectory(remoteDir)) {
                 ftpClient.makeDirectory(remoteDir);
                 ftpClient.changeWorkingDirectory(remoteDir);
@@ -71,7 +69,6 @@ public class FtpTemplate {
         try {
             ftpClient = ftpClientPool.borrowObject();
             bufferedOut = new BufferedOutputStream(out);
-
             ftpClient.changeWorkingDirectory(remoteDir);
             FTPFile[] ftpFiles = ftpClient.listFiles();
             for (FTPFile file : ftpFiles) {

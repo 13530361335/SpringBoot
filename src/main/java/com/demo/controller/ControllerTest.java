@@ -38,13 +38,19 @@ public class ControllerTest {
     private final static Logger log = LoggerFactory.getLogger(ControllerTest.class);
 
     @Value("${server.port}")
-    int port;
+    private int port;
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private Shell shell;
+
+    @Autowired
+    private TestServiceImpl testService;
 
     @RequestMapping(value = "port", method = RequestMethod.GET)
     public String port() {
@@ -80,9 +86,6 @@ public class ControllerTest {
         return "success";
     }
 
-    @Autowired
-    private TestServiceImpl testService;
-
     @RequestMapping(value = "async", method = RequestMethod.GET)
     public String async() {
         testService.sendSms();
@@ -103,8 +106,6 @@ public class ControllerTest {
     }
 
 
-    @Autowired
-    private Shell shell;
 
     @GetMapping("/testProcess")
     public void testProcess(){

@@ -1,5 +1,6 @@
 package com.demo.config;
 
+import com.demo.entity.FtpConfig;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
@@ -7,6 +8,8 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,7 +23,7 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
     private String host;
 
     @Value("${ftp.port}")
-    private int port = 21;
+    private int port;
 
     @Value("${ftp.username}")
     private String username;
@@ -40,11 +43,13 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
 
     private Integer bufferSize = 1024 * 1024;
 
-    /**
-     * 设置keepAlive
-     * 单位:秒  0,禁用
-     */
     private Integer keepAliveTimeOut = 0;
+
+    @Bean
+    @ConfigurationProperties(prefix = "ftp")
+    public FtpConfig getConfig(){
+        return new FtpConfig();
+    }
 
     /**
      * 新建FtpClient对象
@@ -57,10 +62,8 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
             ftpClient.setControlKeepAliveTimeout(keepAliveTimeOut);
             ftpClient.setConnectTimeout(connectTimeOut);
             ftpClient.setDataTimeout(dataTimeOut);
-
             ftpClient.connect(host, port);
             ftpClient.login(username, password);
-
             ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
             ftpClient.setBufferSize(bufferSize);
             if (passiveMode) {
@@ -89,9 +92,7 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
         if (ftpPooled == null) {
             return;
         }
-
         FTPClient ftpClient = ftpPooled.getObject();
-
         try {
             ftpClient.logout();
         } catch (IOException e) {
