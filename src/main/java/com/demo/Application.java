@@ -88,12 +88,12 @@ public class Application {
     }
 
 
-//    @Bean
-//    public FtpTemplate ftpTemplate(FtpFactory factory) {
-//        System.out.println("ftpTemplate()");
-//        FtpTemplate template = new FtpTemplate(factory);
-//        return template;
-//    }
+   @Bean
+   public FtpTemplate ftpTemplate(FtpFactory factory) {
+       System.out.println("ftpTemplate()");
+       FtpTemplate template = new FtpTemplate(factory);
+       return template;
+   }
 
     /**
      * Swagger配置
