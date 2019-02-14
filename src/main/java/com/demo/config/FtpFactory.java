@@ -7,9 +7,10 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -19,35 +20,13 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
 
     private final static Logger log = LoggerFactory.getLogger(FtpFactory.class);
 
-    @Value("${ftp.host}")
-    private String host;
-
-    @Value("${ftp.port}")
-    private int port;
-
-    @Value("${ftp.username}")
-    private String username;
-
-    @Value("${ftp.password}")
-    private String password;
-
-    @Value("${ftp.controlEncoding}")
-    private String controlEncoding;
-
-    @Value("${ftp.passiveMode}")
-    private boolean passiveMode;
-
-    private Integer connectTimeOut = 10 * 1000;
-
-    private Integer dataTimeOut = 60 * 1000;
-
-    private Integer bufferSize = 1024 * 1024;
-
-    private Integer keepAliveTimeOut = 0;
+    @Autowired
+    private FtpConfig ftpConfig;
 
     @Bean
+    @Primary
     @ConfigurationProperties(prefix = "ftp")
-    public FtpConfig getConfig(){
+    public FtpConfig ftpConfig() {
         return new FtpConfig();
     }
 
@@ -58,15 +37,16 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
     public FTPClient create() {
         FTPClient ftpClient = new FTPClient();
         try {
-            ftpClient.setControlEncoding(controlEncoding);
-            ftpClient.setControlKeepAliveTimeout(keepAliveTimeOut);
-            ftpClient.setConnectTimeout(connectTimeOut);
-            ftpClient.setDataTimeout(dataTimeOut);
-            ftpClient.connect(host, port);
-            ftpClient.login(username, password);
-            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            ftpClient.setBufferSize(bufferSize);
-            if (passiveMode) {
+            ftpClient.setControlEncoding(ftpConfig.getControlEncoding());
+            ftpClient.setControlKeepAliveTimeout(ftpConfig.getKeepAliveTimeOut());
+            ftpClient.setConnectTimeout(ftpConfig.getConnectTimeOut());
+
+            ftpClient.connect(ftpConfig.getHost(), ftpConfig.getPort());
+            ftpClient.login(ftpConfig.getUsername(), ftpConfig.getPassword());
+            ftpClient.setDataTimeout(ftpConfig.getDataTimeOut());
+            ftpClient.setFileType(ftpConfig.getFileType());
+            ftpClient.setBufferSize(ftpConfig.getBufferSize());
+            if (ftpConfig.isPassiveMode()) {
                 ftpClient.enterLocalPassiveMode();
             }
             return ftpClient;

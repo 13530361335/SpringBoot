@@ -62,8 +62,10 @@ ftp:
   password: jm19930913.
   controlEncoding: utf-8
   passiveMode: false
-
-
+  bufferSize: 1048576
+  connectTimeOut: 10000
+  dataTimeOut: 60000
+  keepAliveTimeOut: 0
 
 logging:
   level:
