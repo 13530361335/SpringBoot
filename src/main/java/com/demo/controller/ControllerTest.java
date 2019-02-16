@@ -1,12 +1,12 @@
 package com.demo.controller;
 
-import com.demo.config.FtpTemplate;
-import com.demo.config.WebSocketServer;
+import com.demo.com.FtpTemplate;
+import com.demo.com.WebSocketServer;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.impl.TestServiceImpl;
-import com.demo.util.HttpUtil;
-import com.demo.util.Shell;
+import com.demo.util.ImageUtil;
+import com.demo.util.ShellUtil;
 import com.demo.web.Result;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -25,7 +25,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +39,9 @@ public class ControllerTest {
     @Value("${server.port}")
     private int port;
 
+    @Value("${spring.mail.username}")
+    private String from;
+
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
@@ -47,15 +49,55 @@ public class ControllerTest {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private Shell shell;
+    private ShellUtil shell;
 
     @Autowired
     private TestServiceImpl testService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+
+    @Autowired
+    FtpTemplate ftpTemplate;
 
     @RequestMapping(value = "port", method = RequestMethod.GET)
     public String port() {
         return "你访问的rest的端口是:" + port;
     }
+
+
+    @RequestMapping(value = "sql", method = RequestMethod.GET)
+    public Result sql() {
+        PageHelper.startPage(1, 2);
+        List<FileInfo> fileInfos = fileInfoMapper.selectAll();
+        PageInfo<FileInfo> pageInfo = new PageInfo<>(fileInfos);
+        return new Result(pageInfo);
+    }
+
+    @PostMapping("/redisSaveImg")
+    public void redisSaveImg(MultipartFile image) throws IOException {
+        redisTemplate.opsForHash().put("image", "1", ImageUtil.parseImg(image.getInputStream()));
+    }
+
+    @GetMapping("/redisGetImg")
+    public void redisGetImg(HttpServletResponse response) throws IOException {
+        String imgStr = (String) redisTemplate.opsForHash().get("image", "1");
+        ImageUtil.generateImg(imgStr, response.getOutputStream());
+    }
+
+    @GetMapping("/mongodb")
+    public Result getData(String id) {
+        Query query = new Query();
+        Criteria criteria = Criteria.where("id").is(id);
+        query.addCriteria(criteria);
+        List<BasicDBObject> basicDBObjects = mongoTemplate.find(query, BasicDBObject.class, "use_info");
+        return new Result<>(basicDBObjects);
+    }
+
 
     @PostMapping(value = "upload")
     public String upload(MultipartFile file) throws IOException {
@@ -65,19 +107,14 @@ public class ControllerTest {
         return "success";
     }
 
-    @RequestMapping(value = "sql", method = RequestMethod.GET)
-    public Result sql() {
-        PageHelper.startPage(1,2);
-        List<FileInfo> fileInfos =fileInfoMapper.selectAll();
-        PageInfo<FileInfo> pageInfo = new PageInfo<>(fileInfos);
-        return new Result(pageInfo);
-    }
-
-    @RequestMapping(value = "redis", method = RequestMethod.GET)
-    public Result redis() {
-        FileInfo fileInfo = (FileInfo) redisTemplate.opsForHash().get("FileInfo", "1");
-        System.out.println(fileInfo.getUploadTime());
-        return new Result(fileInfo);
+    @PostMapping("/sendEmail2")
+    public void sendSimpleMail(String to, String subject, String content) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(content);
+        mailSender.send(message);
     }
 
     @RequestMapping(value = "websocket", method = RequestMethod.GET)
@@ -93,62 +130,14 @@ public class ControllerTest {
         return "success";
     }
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
-
-    @GetMapping("/mongodb")
-    public Result getData(String id){
-        Query query = new Query();
-        Criteria criteria = Criteria.where("id").is(id);
-        query.addCriteria(criteria);
-        List<BasicDBObject> basicDBObjects =   mongoTemplate.find(query,BasicDBObject.class,"use_info");
-        return new Result<>(basicDBObjects);
-    }
-
-
-
     @GetMapping("/testProcess")
-    public void testProcess(){
+    public void testProcess() {
         shell.doSomeThing();
     }
 
     @PostMapping("/testBody")
-    public Result testProcess(@RequestBody FileInfo fileInfo){
-       return new Result();
+    public Result testProcess(@RequestBody FileInfo fileInfo) {
+        return new Result();
     }
-
-
-    @Autowired
-    private JavaMailSender mailSender;
-
-   @Value("${spring.mail.username}")
-   private String from;
-
-    @PostMapping("/sendEmail2")
-    public void sendSimpleMail(String to, String subject, String content) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(content);
-        mailSender.send(message);
-    }
-
-
-    @Autowired
-    FtpTemplate ftpTemplate;
-
-
-    @GetMapping("/download")
-    public void download(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpUtil.setDownHeader(request,response,"123.mp3");
-        ftpTemplate.download("/2019-02-04","2ac1e883997597e65f3f4a38183b5700",response.getOutputStream());
-    }
-
-    @GetMapping("/delete")
-    public void delete(HttpServletRequest request, HttpServletResponse response){
-        ftpTemplate.delete("/2019-02-04","8eb4b080efea1cac3597d8096f79f749");
-    }
-
 
 }

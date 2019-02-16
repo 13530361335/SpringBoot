@@ -1,4 +1,4 @@
-package com.demo.entity;
+package com.demo.com;
 
 import org.apache.commons.net.ftp.FTPClient;
 

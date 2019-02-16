@@ -7,7 +7,7 @@ import java.io.IOException;
 
 
 @Component
-public class Shell {
+public class ShellUtil {
 
 
     @Async

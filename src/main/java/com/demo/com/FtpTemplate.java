@@ -1,5 +1,6 @@
-package com.demo.config;
+package com.demo.com;
 
+import com.demo.com.FtpFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;

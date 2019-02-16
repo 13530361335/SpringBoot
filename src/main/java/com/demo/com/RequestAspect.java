@@ -1,4 +1,4 @@
-package com.demo.config;
+package com.demo.com;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;

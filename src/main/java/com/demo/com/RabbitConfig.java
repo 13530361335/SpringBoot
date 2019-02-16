@@ -1,4 +1,4 @@
-package com.demo.config;
+package com.demo.com;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;

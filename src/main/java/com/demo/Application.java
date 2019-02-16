@@ -1,7 +1,5 @@
 package com.demo;
 
-import com.demo.config.FtpFactory;
-import com.demo.config.FtpTemplate;
 import com.google.common.base.Predicates;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

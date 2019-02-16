@@ -1,6 +1,5 @@
-package com.demo.config;
+package com.demo.com;
 
-import com.demo.entity.FtpConfig;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
@@ -18,14 +17,16 @@ import java.io.IOException;
 @Component
 public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
 
-    private final static Logger log = LoggerFactory.getLogger(FtpFactory.class);
-
     @Autowired
     private FtpConfig ftpConfig;
 
+    private final static Logger log = LoggerFactory.getLogger(FtpFactory.class);
+
+    private final static String FTP_PREFIX = "ftp";
+
     @Bean
     @Primary
-    @ConfigurationProperties(prefix = "ftp")
+    @ConfigurationProperties(prefix = FTP_PREFIX)
     public FtpConfig ftpConfig() {
         return new FtpConfig();
     }

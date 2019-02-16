@@ -1,7 +1,7 @@
 package com.demo.service.impl;
 
 
-import com.demo.config.FtpTemplate;
+import com.demo.com.FtpTemplate;
 import com.demo.dao.FileInfoMapper;
 import com.demo.dao.FileKeyMapper;
 import com.demo.entity.FileInfo;

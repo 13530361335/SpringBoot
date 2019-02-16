@@ -1,4 +1,4 @@
-package com.demo.config;
+package com.demo.conf;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
@@ -16,9 +16,11 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class DruidConfig {
 
+    private final static String DB_PREFIX = "spring.datasource";
+
     @Bean
     @Primary
-    @ConfigurationProperties(prefix = "spring.datasource")
+    @ConfigurationProperties(prefix = DB_PREFIX)
     public DruidDataSource druidDataSource() {
         return new DruidDataSource();
     }
