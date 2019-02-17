@@ -30,7 +30,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
 @EnableSwagger2
 @EnableAsync
 @EnableScheduling
@@ -84,7 +83,6 @@ public class Application {
         template.setMessageConverter(new Jackson2JsonMessageConverter());
         return template;
     }
-    
 
     /**
      * Swagger配置
@@ -106,7 +104,6 @@ public class Application {
                         .build());
     }
 
-
     /**
      * WebSocket配置
      * @return
@@ -115,12 +112,6 @@ public class Application {
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
     }
-
-
-
-
-
-
 
 }
 
