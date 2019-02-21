@@ -4,7 +4,7 @@ import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.FileService;
 
-import com.demo.web.Result;
+import com.demo.com.Result;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;

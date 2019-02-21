@@ -1,14 +1,14 @@
 package com.demo.service.impl;
 
 
-import com.demo.com.FtpTemplate;
+import com.demo.util.ftp.FtpTemplate;
 import com.demo.dao.FileInfoMapper;
 import com.demo.dao.FileKeyMapper;
 import com.demo.entity.FileInfo;
 import com.demo.entity.FileKey;
 import com.demo.service.FileService;
 import com.demo.util.HttpUtil;
-import com.demo.web.Result;
+import com.demo.com.Result;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

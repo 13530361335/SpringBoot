@@ -2,15 +2,15 @@ package com.demo.conf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+@EnableScheduling
 @Configuration
 public class ScheduleConfig {
 
-    @Autowired
-    private final static Logger log = LoggerFactory.getLogger(ScheduleConfig.class);
+    private final static Logger logger = LoggerFactory.getLogger(ScheduleConfig.class);
 
     public final static long ONE_DAY = 24 * 60 * 60 * 1000;
 
@@ -18,12 +18,12 @@ public class ScheduleConfig {
 
     @Scheduled(fixedRate = ONE_DAY)
     public void scheduledTask() {
-        log.info("初始执行,间隔1D");
+        logger.info("初始执行,间隔1D");
     }
 
     @Scheduled(fixedDelay = ONE_HOUR)
     public void scheduleTask2() {
-        log.info("初始执行,间隔1H");
+        logger.info("初始执行,间隔1H");
     }
 
     @Scheduled(initialDelay = 1000, fixedRate = 5000)
@@ -33,7 +33,7 @@ public class ScheduleConfig {
 
     @Scheduled(cron = "0 0/1 * * * ? ")
     public void ScheduledTask3() {
-        log.info("间隔1M");
+        logger.info("间隔1M");
     }
 
 }

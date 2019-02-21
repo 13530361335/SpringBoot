@@ -36,7 +36,6 @@ public class HttpUtil {
         return true;
     }
 
-
     public static void setImgHeader(HttpServletResponse response) {
         response.setHeader("Content-Type", "image/png");
         response.setHeader("Connection", "close");

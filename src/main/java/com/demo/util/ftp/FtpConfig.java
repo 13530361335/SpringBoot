@@ -1,4 +1,4 @@
-package com.demo.com;
+package com.demo.util.ftp;
 
 import org.apache.commons.net.ftp.FTPClient;
 

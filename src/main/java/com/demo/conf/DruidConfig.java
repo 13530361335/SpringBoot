@@ -3,6 +3,7 @@ package com.demo.conf;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
+import com.demo.com.Constants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -10,17 +11,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-/**
- * Druid配置
- */
 @Configuration
 public class DruidConfig {
 
-    private final static String DB_PREFIX = "spring.datasource";
-
     @Bean
     @Primary
-    @ConfigurationProperties(prefix = DB_PREFIX)
+    @ConfigurationProperties(prefix = Constants.DB_PREFIX)
     public DruidDataSource druidDataSource() {
         return new DruidDataSource();
     }

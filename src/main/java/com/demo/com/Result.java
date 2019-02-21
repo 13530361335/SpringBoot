@@ -1,4 +1,4 @@
-package com.demo.web;
+package com.demo.com;
 
 public class Result<T> {
 

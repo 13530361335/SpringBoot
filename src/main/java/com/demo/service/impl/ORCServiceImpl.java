@@ -2,9 +2,8 @@ package com.demo.service.impl;
 
 import com.demo.service.ORCService;
 import com.demo.util.ORCUtil;
-import com.demo.web.Result;
+import com.demo.com.Result;
 import net.sourceforge.tess4j.TesseractException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,15 +14,13 @@ import java.util.Map;
 @Service
 public class ORCServiceImpl implements ORCService {
 
-    @Autowired
-    private ORCUtil orcUtil;
 
     @Override
     public Result simpleAnalysis(MultipartFile file) {
         String data;
         long start = System.currentTimeMillis();
         try {
-            data = orcUtil.simpleAnalysis(file.getInputStream());
+            data = ORCUtil.simpleAnalysis(file.getInputStream());
         } catch (IOException e) {
             return new Result("Image Error");
         } catch (TesseractException e) {

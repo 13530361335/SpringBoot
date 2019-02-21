@@ -1,6 +1,6 @@
 package com.demo.service;
 
-import com.demo.web.Result;
+import com.demo.com.Result;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface ORCService {

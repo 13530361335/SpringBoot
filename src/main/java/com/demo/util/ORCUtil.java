@@ -11,11 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Component
 public class ORCUtil {
 
-    public String simpleAnalysis(InputStream in) throws TesseractException, IOException {
-        String path = new File(this.getClass().getResource("/tessdata").getPath()).getPath();
+    public static String simpleAnalysis(InputStream in) throws TesseractException, IOException {
+        String path = new File(ORCUtil.class.getResource("/tessdata").getPath()).getPath();
         BufferedImage bufferedImage = ImageIO.read(in);
 
         ITesseract instance = new Tesseract();

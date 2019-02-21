@@ -1,7 +1,7 @@
 package com.demo.controller;
 
 import com.demo.service.ORCService;
-import com.demo.web.Result;
+import com.demo.com.Result;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

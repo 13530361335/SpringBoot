@@ -1,13 +1,13 @@
 package com.demo.controller;
 
-import com.demo.com.FtpTemplate;
+import com.demo.util.ftp.FtpTemplate;
 import com.demo.com.WebSocketServer;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
 import com.demo.service.impl.TestServiceImpl;
 import com.demo.util.ImageUtil;
 import com.demo.util.ShellUtil;
-import com.demo.web.Result;
+import com.demo.com.Result;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mongodb.BasicDBObject;

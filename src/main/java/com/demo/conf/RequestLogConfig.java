@@ -1,4 +1,4 @@
-package com.demo.com;
+package com.demo.conf;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
@@ -24,9 +24,9 @@ import java.util.Map;
 
 @Aspect
 @Configuration
-public class RequestAspect {
+public class RequestLogConfig {
 
-    private Logger log = LoggerFactory.getLogger(RequestAspect.class);
+    private final static Logger log = LoggerFactory.getLogger(RequestLogConfig.class);
 
     @Autowired
     private MongoTemplate mongoTemplate;
