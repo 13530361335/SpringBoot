@@ -3,7 +3,7 @@ package com.demo.conf;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;
-import com.demo.com.Constants;
+import com.demo.com.Constant;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -16,7 +16,7 @@ public class DruidConfig {
 
     @Bean
     @Primary
-    @ConfigurationProperties(prefix = Constants.DB_PREFIX)
+    @ConfigurationProperties(prefix = Constant.DB_PREFIX)
     public DruidDataSource druidDataSource() {
         return new DruidDataSource();
     }

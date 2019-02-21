@@ -4,7 +4,6 @@ import com.demo.util.ftp.FtpTemplate;
 import com.demo.com.WebSocketServer;
 import com.demo.dao.FileInfoMapper;
 import com.demo.entity.FileInfo;
-import com.demo.service.impl.TestServiceImpl;
 import com.demo.util.ImageUtil;
 import com.demo.util.ShellUtil;
 import com.demo.com.Result;
@@ -34,10 +33,7 @@ import java.util.List;
 @RestController
 public class ControllerTest {
 
-    private final static Logger log = LoggerFactory.getLogger(ControllerTest.class);
-
-    @Value("${server.port}")
-    private int port;
+    private final static Logger logger = LoggerFactory.getLogger(ControllerTest.class);
 
     @Value("${spring.mail.username}")
     private String from;
@@ -49,26 +45,16 @@ public class ControllerTest {
     private RedisTemplate redisTemplate;
 
     @Autowired
-    private ShellUtil shell;
-
-    @Autowired
-    private TestServiceImpl testService;
-
-    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private ShellUtil shellUtil;
 
     @Autowired
     FtpTemplate ftpTemplate;
-
-    @RequestMapping(value = "port", method = RequestMethod.GET)
-    public String port() {
-        return "你访问的rest的端口是:" + port;
-    }
-
 
     @RequestMapping(value = "sql", method = RequestMethod.GET)
     public Result sql() {
@@ -98,7 +84,6 @@ public class ControllerTest {
         return new Result<>(basicDBObjects);
     }
 
-
     @PostMapping(value = "upload")
     public String upload(MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
@@ -107,7 +92,7 @@ public class ControllerTest {
         return "success";
     }
 
-    @PostMapping("/sendEmail2")
+    @PostMapping("/sendEmail")
     public void sendSimpleMail(String to, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
@@ -123,16 +108,9 @@ public class ControllerTest {
         return "success";
     }
 
-    @RequestMapping(value = "async", method = RequestMethod.GET)
-    public String async() {
-        testService.sendSms();
-        System.out.println("##################");
-        return "success";
-    }
-
     @GetMapping("/testProcess")
-    public void testProcess() {
-        shell.doSomeThing();
+    public void testProcess(String... command) {
+        shellUtil.execute(command);
     }
 
     @PostMapping("/testBody")

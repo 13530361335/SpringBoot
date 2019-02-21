@@ -11,19 +11,16 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+/**
+ *  netty 框架怎么用进来
+ */
 @ServerEndpoint(value = "/websocket")
 @Component
 public class WebSocketServer {
 
-    private final static Logger log = LoggerFactory.getLogger(WebSocketServer.class);
-
-
-    @Autowired
-    private RedisTemplate redisTemplate;
+    private final static Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
 
     //静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
     private static int onlineCount = 0;
@@ -44,15 +41,13 @@ public class WebSocketServer {
         this.session = session;
         webSocketSet.add(this);     //加入set中
         addOnlineCount();           //在线数加1
-        log.info("有新连接加入！当前在线人数为" + getOnlineCount());
-        redisTemplate.opsForHash().put("session", "id", session);
+        logger.info("有新连接加入！当前在线人数为" + getOnlineCount());
         try {
             sendMessage("连接成功");
         } catch (IOException e) {
-            log.error("websocket IO异常");
+            logger.error("websocket IO异常");
         }
     }
-
 
     /**
      * 连接关闭调用的方法
@@ -61,7 +56,7 @@ public class WebSocketServer {
     public void onClose() {
         webSocketSet.remove(this);  //从set中删除
         subOnlineCount();           //在线数减1
-        log.info("有一连接关闭！当前在线人数为" + getOnlineCount());
+        logger.info("有一连接关闭！当前在线人数为" + getOnlineCount());
     }
 
     /**
@@ -72,13 +67,13 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message, Session session) {
-        log.info("来自客户端的消息:" + message);
+        logger.info("来自客户端的消息:" + message);
         //群发消息
         for (WebSocketServer item : webSocketSet) {
             try {
                 item.sendMessage(message);
             } catch (IOException e) {
-                log.error(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -89,7 +84,7 @@ public class WebSocketServer {
      */
     @OnError
     public void onError(Session session, Throwable error) {
-        log.error("发生错误");
+        logger.error(error.getMessage(),error);
     }
 
     public void sendMessage(String message) throws IOException {
@@ -103,7 +98,7 @@ public class WebSocketServer {
      * @throws IOException
      */
     public static void sendInfo(String message) {
-        log.info(message);
+        logger.info(message);
         for (WebSocketServer item : webSocketSet) {
             try {
                 item.sendMessage(message);
