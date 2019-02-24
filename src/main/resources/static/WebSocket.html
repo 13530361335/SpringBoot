@@ -1,66 +1,99 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
-    <title>My WebSocket</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="renderer" content="webkit"/>
+    <title>WebSocket</title>
+    <script src="/bootstrap-3.3.7/js/jquery-3.3.1.min.js"></script>
 </head>
-
-<body>
-Welcome<br/>
-<input id="text" type="text" /><button onclick="send()">Send</button>    <button onclick="closeWebSocket()">Close</button>
+<br>
+<h1 id="title">欢迎</h1>
+<h2 id="online">在线用户用:</h2>
+to:<input id="to" type="text" value="all">&nbsp;&nbsp;
+data:<input id="data" type="text" value="hello">
+<button onclick="send()">Send</button>
+<button onclick="closeWebSocket()">Close</button>
 <div id="message">
 </div>
-</body>
-
 <script type="text/javascript">
+    var username = randomWord(false, 4);
+    document.getElementById('title').innerText = "欢迎," + username;
+
     var websocket = null;
-
     //判断当前浏览器是否支持WebSocket
-    if('WebSocket' in window){
-        websocket = new WebSocket("ws://localhost:9001/websocket");
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://" + document.location.host + "/websocket/" + username);
+    } else {
+        alert('你的浏览器不支持WebSocket')
     }
-    else{
-        alert('Not support websocket')
-    }
-
-    //连接发生错误的回调方法
-    websocket.onerror = function(){
-        setMessageInnerHTML("error");
-    };
-
     //连接成功建立的回调方法
-    websocket.onopen = function(){
+    websocket.onopen = function () {
         setMessageInnerHTML("open");
     }
-
     //接收到消息的回调方法
-    websocket.onmessage = function(event){
+    websocket.onmessage = function (event) {
         setMessageInnerHTML(event.data);
     }
-
     //连接关闭的回调方法
-    websocket.onclose = function(){
+    websocket.onclose = function () {
         setMessageInnerHTML("close");
     }
-
+    //连接发生错误的回调方法
+    websocket.onerror = function () {
+        setMessageInnerHTML("error");
+    };
     //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
-    window.onbeforeunload = function(){
+    window.onbeforeunload = function () {
         websocket.close();
-    }
-
-    //将消息显示在网页上
-    function setMessageInnerHTML(innerHTML){
-        document.getElementById('message').innerHTML += innerHTML + '<br/>';
     }
 
     //关闭连接
     function closeWebSocket(){
         websocket.close();
     }
-
     //发送消息
-    function send(){
-        var message = document.getElementById('text').value;
-        websocket.send(message);
+    function send() {
+        var message = {"to": "all", "data": "hello"};
+        message.to = document.getElementById('to').value;
+        message.data = document.getElementById('data').value;
+        websocket.send(JSON.stringify(message));
     }
+
+    //将消息显示在网页上
+    function setMessageInnerHTML(message) {
+        if (message.indexOf("online") != -1) {
+            var online = JSON.parse(message).online;
+            document.getElementById('online').innerText = "在线用户用:" + JSON.stringify(online);
+        } else {
+            document.getElementById('message').innerHTML += message + '<br/>';
+        }
+    }
+
+    /**
+     * randomWord 产生任意长度随机字母数字组合
+     * @param randomFlag 是否任意长度 min-任意长度最小位[固定位数] max-任意长度最大位
+     * @param min
+     * @param max
+     * @returns {string}
+     */
+    function randomWord(randomFlag, min, max) {
+        var str = "",
+            range = min,
+            arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+
+        // 随机产生
+        if (randomFlag) {
+            range = Math.round(Math.random() * (max - min)) + min;
+        }
+        var pos;
+        for (var i = 0; i < range; i++) {
+            pos = Math.round(Math.random() * (arr.length - 1));
+            str += arr[pos];
+        }
+        return str;
+    }
+
 </script>
+</body>
 </html>

@@ -1,12 +1,14 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://dev:123456@localhost:8761/eureka/
+      defaultZone: http://eureka:123456@${spring.cloud.client.ip-address}:9000/eureka/
   instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
     status-page-url-path: /swagger-ui.html
 
 server:
-  port: 9001
+  port: 9010
 
 mybatis:
   mapper-locations: classpath:com/demo/mapper/*Mapper.xml
@@ -16,20 +18,36 @@ pagehelper:
 
 spring:
   application:
-    name: SpringBoot
+    name: springboot
     version : 0.5.0
   datasource:
     url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: 19930913
+    password: cq9LVwmGfVybyNNm/saPbyQMXiTB9/j5yTR4aRoAApsZHrysKXddh2zSt3JPzAWqKfxxBT5FiH2BayhtF7Orkg==
     driver-class-name: com.mysql.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
-    initialSize: 5
-    maxActive: 20
-    maxWait: 60000
-    testWhileIdle: true
-    validationQuery: SELECT 1 FROM DUAL
-    filters: wall,stat
+    druid:
+      initial-size: 5
+      min-idle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: config,stat,wall
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000;config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKHGwq7q2RmwuRgKxBypQHw0mYu4BQZ3eMsTrdK8E6igRcxsobUC7uT0SoxIjl1WveWniCASejoQtn/BY6hVKWsCAwEAAQ==
+      web-stat-filter:
+        url-pattern: "/*"
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+      stat-view-servlet:
+        url-pattern: "/druid/*"
+        login-username: druid
+        login-password: 123456
   redis:
     host: localhost
     port: 6379
@@ -43,7 +61,6 @@ spring:
   data:
     mongodb:
       uri: mongodb://127.0.0.1:27017/demo
-      username:
   servlet:
     multipart:
       max-file-size: 10MB
@@ -73,10 +90,3 @@ logging:
     org.mongodb.driver: off
   pattern:
     dateformat: 'yy-MM-dd HH:mm:ss'
-
-
-
-
-
-
-

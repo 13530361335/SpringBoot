@@ -40,7 +40,7 @@ public class SwaggerConfig {
                         .version(appVersion)
                         .description("发布时间: " + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()))
                         .license("登录Druid")
-                        .licenseUrl("/druid/index.html")
+                        .licenseUrl("druid/index.html")
                         .build());
     }
 }

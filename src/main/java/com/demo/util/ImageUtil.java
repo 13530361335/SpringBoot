@@ -1,6 +1,8 @@
 package com.demo.util;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -10,17 +12,19 @@ import java.io.OutputStream;
 
 public class ImageUtil {
 
+    private final static Logger logger = LoggerFactory.getLogger(ImageUtil.class);
+
     /**
      * @param in
      * @return
      */
     public static String parseImg(InputStream in) {
         byte[] data = null;
-        try {
+        try{
             data = new byte[in.available()];
             in.read(data);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         } finally {
             IOUtils.closeQuietly(in);
         }
@@ -45,6 +49,7 @@ public class ImageUtil {
             out.flush();
             return true;
         } catch (IOException e) {
+            logger.error(e.getMessage(),e);
             return false;
         } finally {
             IOUtils.closeQuietly(out);

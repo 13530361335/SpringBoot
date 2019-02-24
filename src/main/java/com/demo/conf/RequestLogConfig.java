@@ -38,8 +38,8 @@ public class RequestLogConfig {
     //请求method前打印内容
     @Before(value = "controllerAspect()")
     public void before(JoinPoint joinPoint) {
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = requestAttributes.getRequest();
+        ServletRequestAttributes requestAttr = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = requestAttr.getRequest();
         BasicDBObject logInfo = getBasicDBObject(request, joinPoint);
         log.info("请求数据:" + JSONObject.toJSONString(logInfo));
         mongoTemplate.insert(logInfo, "request");
