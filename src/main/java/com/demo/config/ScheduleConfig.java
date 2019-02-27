@@ -17,23 +17,18 @@ public class ScheduleConfig {
     public final static long ONE_HOUR = 60 * 60 * 1000;
 
     @Scheduled(fixedRate = ONE_DAY)
-    public void scheduledTask() {
-        logger.info("初始执行,间隔1D");
-    }
-
-    @Scheduled(fixedDelay = ONE_HOUR)
-    public void scheduleTask2() {
-        logger.info("初始执行,间隔1H");
+    public void scheduledTask1() {
+        logger.info("scheduledTask1()");
     }
 
     @Scheduled(initialDelay = 1000, fixedRate = 5000)
-    public void doSomething() {
-        // something that should execute periodically
+    public void scheduledTask2() {
+        logger.info("scheduledTask2()");
     }
 
     @Scheduled(cron = "0 0/1 * * * ? ")
     public void ScheduledTask3() {
-        logger.info("间隔1M");
+        logger.info("scheduledTask3()");
     }
 
 }
