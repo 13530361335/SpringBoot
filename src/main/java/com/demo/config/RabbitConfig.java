@@ -1,4 +1,4 @@
-package com.demo.conf;
+package com.demo.config;
 
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

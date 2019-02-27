@@ -29,8 +29,31 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: 19930913
+    password: cq9LVwmGfVybyNNm/saPbyQMXiTB9/j5yTR4aRoAApsZHrysKXddh2zSt3JPzAWqKfxxBT5FiH2BayhtF7Orkg==
     driver-class-name: com.mysql.jdbc.Driver
+      type: com.alibaba.druid.pool.DruidDataSource
+      druid:
+        initial-size: 5
+        min-idle: 5
+        maxActive: 20
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
+        filters: config,stat,wall
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000;config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKHGwq7q2RmwuRgKxBypQHw0mYu4BQZ3eMsTrdK8E6igRcxsobUC7uT0SoxIjl1WveWniCASejoQtn/BY6hVKWsCAwEAAQ==
+        web-stat-filter:
+          url-pattern: "/*"
+          exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+        stat-view-servlet:
+          url-pattern: "/druid/*"
+          login-username: druid
+          login-password: 123456
   redis:
     host: localhost
     port: 6379
@@ -86,3 +109,4 @@ logging:
     org.mongodb.driver: off
   pattern:
     dateformat: 'yy-MM-dd HH:mm:ss'
+

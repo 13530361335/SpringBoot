@@ -1,4 +1,4 @@
-package com.demo.com;
+package com.demo.service;
 
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;

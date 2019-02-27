@@ -1,10 +1,10 @@
 package com.demo.controller;
 
+import com.demo.dao.UserInfoMapper;
+import com.demo.entity.UserInfo;
+import com.demo.util.FastIOUtil;
 import com.demo.util.ftp.FtpTemplate;
-import com.demo.com.WebSocket;
-import com.demo.dao.FileInfoMapper;
-import com.demo.entity.FileInfo;
-import com.demo.util.ImageUtil;
+import com.demo.service.WebSocket;
 import com.demo.util.ShellUtil;
 import com.demo.com.Result;
 import com.github.pagehelper.PageHelper;
@@ -21,7 +21,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,7 +40,7 @@ public class TestController {
     private String from;
 
     @Autowired
-    private FileInfoMapper fileInfoMapper;
+    private UserInfoMapper userInfoMapper;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -61,20 +60,20 @@ public class TestController {
     @RequestMapping(value = "sql", method = RequestMethod.GET)
     public Result sql() {
         PageHelper.startPage(1, 2);
-        List<FileInfo> fileInfos = fileInfoMapper.selectAll();
-        PageInfo<FileInfo> pageInfo = new PageInfo<>(fileInfos);
+        List<UserInfo> userInfos = userInfoMapper.selectAll();
+        PageInfo<UserInfo> pageInfo = new PageInfo(userInfos);
         return new Result(pageInfo);
     }
 
     @PostMapping("/redisSaveImg")
     public void redisSaveImg(MultipartFile image) throws IOException {
-        redisTemplate.opsForHash().put("image", "1", ImageUtil.parseImg(image.getInputStream()));
+        redisTemplate.opsForHash().put("image", "1", FastIOUtil.parseImg(image.getInputStream()));
     }
 
     @GetMapping("/redisGetImg")
     public void redisGetImg(HttpServletResponse response) throws IOException {
         String imgStr = (String) redisTemplate.opsForHash().get("image", "1");
-        ImageUtil.generateImg(imgStr, response.getOutputStream());
+        FastIOUtil.generateImg(imgStr, response.getOutputStream());
     }
 
     @GetMapping("/mongodb")
@@ -83,7 +82,7 @@ public class TestController {
         Criteria criteria = Criteria.where("id").is(id);
         query.addCriteria(criteria);
         List<BasicDBObject> basicDBObjects = mongoTemplate.find(query, BasicDBObject.class, "use_info");
-        return new Result<>(basicDBObjects);
+        return new Result(basicDBObjects);
     }
 
     @PostMapping(value = "upload")
@@ -112,11 +111,6 @@ public class TestController {
     @GetMapping("/testProcess")
     public void testProcess(String... command) {
         shellUtil.execute(command);
-    }
-
-    @PostMapping("/testBody")
-    public Result testProcess(@RequestBody FileInfo fileInfo) {
-        return new Result();
     }
 
     @GetMapping("/getOnline")

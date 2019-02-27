@@ -2,6 +2,8 @@ package com.demo.dao;
 
 import com.demo.entity.UserInfo;
 
+import java.util.List;
+
 public interface UserInfoMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,6 @@ public interface UserInfoMapper {
     int updateByPrimaryKeySelective(UserInfo record);
 
     int updateByPrimaryKey(UserInfo record);
+
+    List<UserInfo> selectAll();
 }
