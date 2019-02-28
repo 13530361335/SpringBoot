@@ -126,6 +126,16 @@
             <artifactId>spring-boot-admin-starter-client</artifactId>
             <version>2.1.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.9.4</version>
+        </dependency>
         <!-- dev tools start -->
     </dependencies>
 
@@ -143,6 +153,7 @@
 
     <build>
         <plugins>
+            <!-- TODO 清除不需要的包 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
