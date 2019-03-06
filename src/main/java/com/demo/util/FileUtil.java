@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
  * @author ThinkGem
  * @version 2013-06-21
  */
-public class FileUtils extends org.apache.commons.io.FileUtils {
+public class FileUtil{
 
-    private static Logger log = LoggerFactory.getLogger(FileUtils.class);
+    private static Logger log = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      * 根据文件获取文件后缀
@@ -105,7 +105,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             // 如果目标文件存在，并且允许覆盖
             if (cover) {
                 log.debug("目标文件已存在，准备删除!");
-                if (!FileUtils.delFile(descFileName)) {
+                if (!FileUtil.delFile(descFileName)) {
                     log.debug("删除目标文件 ", descFileName, " 失败!");
                     return false;
                 }
@@ -192,7 +192,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             if (cover) {
                 // 允许覆盖目标目录
                 log.debug("目标目录已存在，准备删除!");
-                if (!FileUtils.delFile(descDirNames)) {
+                if (!FileUtil.delFile(descDirNames)) {
                     log.debug("删除目录 ", descDirNames, " 失败!");
                     return false;
                 }
@@ -216,7 +216,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
         for (int i = 0; i < files.length; i++) {
             // 如果是一个单个文件，则直接复制
             if (files[i].isFile()) {
-                flag = FileUtils.copyFileCover(files[i].getAbsolutePath(), descDirName + files[i].getName(), false);
+                flag = FileUtil.copyFileCover(files[i].getAbsolutePath(), descDirName + files[i].getName(), false);
                 // 如果拷贝文件失败，则退出循环
                 if (!flag) {
                     break;
@@ -224,7 +224,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             }
             // 如果是子目录，则继续复制目录
             if (files[i].isDirectory()) {
-                flag = FileUtils.copyDirectoryCover(files[i]
+                flag = FileUtil.copyDirectoryCover(files[i]
                         .getAbsolutePath(), descDirName + files[i].getName(), false);
                 // 如果拷贝目录失败，则退出循环
                 if (!flag) {
@@ -254,9 +254,9 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             return true;
         } else {
             if (file.isFile()) {
-                return FileUtils.deleteFile(fileName);
+                return FileUtil.deleteFile(fileName);
             } else {
-                return FileUtils.deleteDirectory(fileName);
+                return FileUtil.deleteDirectory(fileName);
             }
         }
     }
@@ -305,7 +305,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
         for (int i = 0; i < files.length; i++) {
             // 删除子文件
             if (files[i].isFile()) {
-                flag = FileUtils.deleteFile(files[i].getAbsolutePath());
+                flag = FileUtil.deleteFile(files[i].getAbsolutePath());
                 // 如果删除文件失败，则退出循环
                 if (!flag) {
                     break;
@@ -313,7 +313,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             }
             // 删除子目录
             else if (files[i].isDirectory()) {
-                flag = FileUtils.deleteDirectory(files[i]
+                flag = FileUtil.deleteDirectory(files[i]
                         .getAbsolutePath());
                 // 如果删除子目录失败，则退出循环
                 if (!flag) {
@@ -430,13 +430,13 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             ZipOutputStream zouts = new ZipOutputStream(new FileOutputStream(
                     descFile));
             if ("*".equals(fileName) || "".equals(fileName)) {
-                FileUtils.zipDirectoryToZipFile(dirPath, fileDir, zouts);
+                FileUtil.zipDirectoryToZipFile(dirPath, fileDir, zouts);
             } else {
                 File file = new File(fileDir, fileName);
                 if (file.isFile()) {
-                    FileUtils.zipFilesToZipFile(dirPath, file, zouts);
+                    FileUtil.zipFilesToZipFile(dirPath, file, zouts);
                 } else {
-                    FileUtils
+                    FileUtil
                             .zipDirectoryToZipFile(dirPath, file, zouts);
                 }
             }
@@ -531,11 +531,11 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             for (int i = 0; i < files.length; i++) {
                 if (files[i].isFile()) {
                     // 如果是文件，则调用文件压缩方法
-                    FileUtils
+                    FileUtil
                             .zipFilesToZipFile(dirPath, files[i], zouts);
                 } else {
                     // 如果是目录，则递归调用
-                    FileUtils.zipDirectoryToZipFile(dirPath, files[i],
+                    FileUtil.zipDirectoryToZipFile(dirPath, files[i],
                             zouts);
                 }
             }
@@ -610,7 +610,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      */
     public static void writeFile(String content, String filePath) {
         try {
-            if (FileUtils.createFile(filePath)) {
+            if (FileUtil.createFile(filePath)) {
                 FileWriter fileWriter = new FileWriter(filePath, true);
                 BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
                 bufferedWriter.write(content);

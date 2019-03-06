@@ -1,7 +1,7 @@
-package com.demo.com;
+package com.demo.common;
 
 /**
- * 常量统一存放
+ * 统一常量存放
  */
 public interface Constant {
 

@@ -1,13 +1,14 @@
 package com.demo.entity;
 
 public class UserInfo {
+
     private Integer id;
 
     private String account;
 
     private String password;
 
-    private String emali;
+    private String email;
 
     private String phone;
 
@@ -39,12 +40,12 @@ public class UserInfo {
         this.password = password;
     }
 
-    public String getEmali() {
-        return emali;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmali(String emali) {
-        this.emali = emali;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPhone() {

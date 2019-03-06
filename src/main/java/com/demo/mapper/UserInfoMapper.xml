@@ -5,13 +5,13 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="account" jdbcType="VARCHAR" property="account"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
-        <result column="emali" jdbcType="VARCHAR" property="emali"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
         <result column="phone" jdbcType="VARCHAR" property="phone"/>
         <result column="address" jdbcType="VARCHAR" property="address"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, account, password, emali, phone, address, name
+    id, account, password, email, phone, address, name
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -25,10 +25,10 @@
   </delete>
     <insert id="insert" parameterType="com.demo.entity.UserInfo">
     insert into user_info (id, account, password, 
-      emali, phone, address, 
+      email, phone, address, 
       name)
     values (#{id,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
-      #{emali,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
       #{name,jdbcType=VARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="com.demo.entity.UserInfo">
@@ -43,8 +43,8 @@
             <if test="password != null">
                 password,
             </if>
-            <if test="emali != null">
-                emali,
+            <if test="email != null">
+                email,
             </if>
             <if test="phone != null">
                 phone,
@@ -66,8 +66,8 @@
             <if test="password != null">
                 #{password,jdbcType=VARCHAR},
             </if>
-            <if test="emali != null">
-                #{emali,jdbcType=VARCHAR},
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
             </if>
             <if test="phone != null">
                 #{phone,jdbcType=VARCHAR},
@@ -89,8 +89,8 @@
             <if test="password != null">
                 password = #{password,jdbcType=VARCHAR},
             </if>
-            <if test="emali != null">
-                emali = #{emali,jdbcType=VARCHAR},
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
             </if>
             <if test="phone != null">
                 phone = #{phone,jdbcType=VARCHAR},
@@ -108,7 +108,7 @@
     update user_info
     set account = #{account,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
-      emali = #{emali,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       address = #{address,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR}

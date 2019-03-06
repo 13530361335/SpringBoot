@@ -14,7 +14,9 @@
         <!-- 接口 -->
         <javaClientGenerator targetPackage="com.demo.dao"    targetProject="./src/main/java" type="XMLMAPPER"/>
         <!-- 表/实体 -->
-        <table  tableName="%" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
+        <!--<table  tableName="%" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"-->
+                <!--enableSelectByExample="false" selectByExampleQueryId="false" ></table>-->
+        <table  tableName=""  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false"
                 enableSelectByExample="false" selectByExampleQueryId="false" ></table>
     </context>
     <!-- https://github.com/GreedyStar/generator -->

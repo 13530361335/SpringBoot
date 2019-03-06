@@ -9,7 +9,7 @@ public class JsonUtil {
         return JSON.toJSONString(object, SerializerFeature.WriteMapNullValue);
     }
 
-    public static <T> T toObject(String json, Class<T> classType){
+    public static <T> T toObject(String json, Class<T> classType) {
         return JSON.parseObject(json, classType);
     }
 

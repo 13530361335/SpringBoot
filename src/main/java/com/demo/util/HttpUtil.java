@@ -1,6 +1,8 @@
 package com.demo.util;
 
 import org.apache.commons.io.IOUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.misc.BASE64Decoder;
@@ -8,15 +10,82 @@ import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class FastIOUtil {
 
-    private final static Logger logger = LoggerFactory.getLogger(FastIOUtil.class);
+public class HttpUtil {
+
+    private final static Logger logger = LoggerFactory.getLogger(HttpUtil.class);
+
+    public static Document getHtml(String url) {
+        try {
+            return Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36")
+                    .referrer(getReferer(url))
+                    .timeout(5000)
+                    .get();
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param url
+     * @param savePath
+     */
+    public static void downLoad(String url, String savePath) {
+        InputStream in = null;
+        OutputStream out = null;
+        try {
+            URLConnection conn = new URL(url).openConnection();
+            conn.setRequestProperty("referer", getReferer(url));
+            conn.setRequestProperty("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36");
+            conn.connect();
+
+            String contentDisposition = conn.getHeaderField("Content-Disposition");
+            String fileName = contentDisposition == null ? url.substring(url.lastIndexOf("/") + 1) : contentDisposition.substring(contentDisposition.lastIndexOf(";") + 1);
+            String contentType = conn.getContentType();
+            long contentLength = conn.getContentLengthLong();
+            logger.info("文件名:[" + fileName + "], 类型:[" + contentType + "], 大小:[" + contentLength + "]");
+
+            in = conn.getInputStream();
+            out = new FileOutputStream(new File((savePath + fileName)));
+            byte[] bytes = new byte[1024];
+            int len;
+            while ((len = in.read(bytes)) != -1) {
+                out.write(bytes, 0, len);
+            }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+    }
+
+    private static String getReferer(String url) {
+        String[] urls = url.split("://");
+        String protocol = urls[0];
+        String uri = urls[1];
+        uri = uri.substring(0, uri.indexOf("/"));
+        String referer = protocol + "://" + uri;
+        return referer;
+    }
+
 
     /**
      * 文件下载时设置响应头

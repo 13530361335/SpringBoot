@@ -104,5 +104,3 @@ public class FtpFactory extends BasePooledObjectFactory<FTPClient> {
     }
 
 }
-
-

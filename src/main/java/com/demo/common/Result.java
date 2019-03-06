@@ -1,5 +1,9 @@
-package com.demo.com;
+package com.demo.common;
 
+/**
+ * 统一返回结果集
+ * @param <T>
+ */
 public class Result<T> {
 
     private int code;

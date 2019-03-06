@@ -2,11 +2,11 @@ package com.demo.controller;
 
 import com.demo.dao.UserInfoMapper;
 import com.demo.entity.UserInfo;
-import com.demo.util.FastIOUtil;
+import com.demo.util.HttpUtil;
 import com.demo.util.ftp.FtpTemplate;
 import com.demo.service.WebSocket;
 import com.demo.util.ShellUtil;
-import com.demo.com.Result;
+import com.demo.common.Result;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.mongodb.BasicDBObject;
@@ -24,8 +24,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Set;
 
@@ -67,13 +68,13 @@ public class TestController {
 
     @PostMapping("/redisSaveImg")
     public void redisSaveImg(MultipartFile image) throws IOException {
-        redisTemplate.opsForHash().put("image", "1", FastIOUtil.parseImg(image.getInputStream()));
+        redisTemplate.opsForHash().put("image", "1", HttpUtil.parseImg(image.getInputStream()));
     }
 
     @GetMapping("/redisGetImg")
     public void redisGetImg(HttpServletResponse response) throws IOException {
         String imgStr = (String) redisTemplate.opsForHash().get("image", "1");
-        FastIOUtil.generateImg(imgStr, response.getOutputStream());
+        HttpUtil.generateImg(imgStr, response.getOutputStream());
     }
 
     @GetMapping("/mongodb")
@@ -91,6 +92,20 @@ public class TestController {
         String dir = "/2018-12-31";
         ftpTemplate.upload(dir, fileName, file.getInputStream());
         return "success";
+    }
+
+    @GetMapping(value = "down")
+    public void down(HttpServletRequest request,HttpServletResponse response) throws IOException {
+        HttpUtil.setDownHeader(request,response,"navicat121_premium_cs_x64.exe");
+        OutputStream out = response.getOutputStream();
+        InputStream in = new FileInputStream(new File(("D:\\Downloads\\" + "navicat121_premium_cs_x64.exe")));
+        byte[] bytes = new byte[1024 * 8];
+        int len;
+        while ((len = in.read(bytes)) != -1) {
+            out.write(bytes, 0, len);
+        }
+        out.close();
+        in.close();
     }
 
     @PostMapping("/sendEmail")
