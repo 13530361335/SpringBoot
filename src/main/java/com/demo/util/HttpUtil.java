@@ -49,7 +49,8 @@ public class HttpUtil {
             conn.connect();
 
             String contentDisposition = conn.getHeaderField("Content-Disposition");
-            String fileName = contentDisposition == null ? url.substring(url.lastIndexOf("/") + 1) : contentDisposition.substring(contentDisposition.lastIndexOf(";") + 1);
+            String fileName = contentDisposition == null ? url.substring(url.lastIndexOf("/") + 1) :
+                    contentDisposition.substring(contentDisposition.indexOf('"') + 1, contentDisposition.lastIndexOf('"'));
             String contentType = conn.getContentType();
             long contentLength = conn.getContentLengthLong();
             logger.info("文件名:[" + fileName + "], 类型:[" + contentType + "], 大小:[" + contentLength + "]");

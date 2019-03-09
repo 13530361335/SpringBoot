@@ -1,5 +1,8 @@
 package com.demo.controller;
 
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.demo.dao.UserInfoMapper;
 import com.demo.entity.UserInfo;
 import com.demo.util.HttpUtil;
@@ -24,9 +27,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -135,5 +142,32 @@ public class TestController {
     }
 
 
+    @GetMapping("/a.htm")
+    public void cooperation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ServletOutputStream out = response.getOutputStream();
+        ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX, true);
+        String fileName = new String(("UserInfo " + new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+                .getBytes(), "UTF-8");
+        Sheet sheet1 = new Sheet(1, 0);
+        sheet1.setSheetName("第一个sheet");
 
+        List<List<String>>  lists = new LinkedList();
+        List<String>  l1 = new LinkedList();
+        l1.add("jing");
+        l1.add("123");
+        List<String>  l2 = new LinkedList();
+        l2.add("jing");
+        l2.add("123");
+        lists.add(l1);
+        lists.add(l2);
+
+        writer.write0(lists, sheet1);
+        writer.finish();
+        response.setContentType("multipart/form-data");
+        response.setCharacterEncoding("utf-8");
+        response.setHeader("Content-disposition", "attachment;filename="+fileName+".xlsx");
+        out.flush();
+    }
 }
+
+
