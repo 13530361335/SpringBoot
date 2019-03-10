@@ -45,7 +45,7 @@ public class ExcelUtilTest {
 
         String[] fields = {"id", "name"};
         String[] excelFields = {"主键", "名字"};
-        ExcelUtil.toXlsx(new FileInputStream("D:/Temp/1.xlsx"),new FileOutputStream("D:/Temp/map2.xlsx"),fields,list);
+        ExcelUtil.toXlsxByTemplate(new FileInputStream("D:/Temp/1.xlsx"),new FileOutputStream("D:/Temp/map2.xlsx"),list,fields);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ExcelUtilTest {
 
         String[] fields = {"id", "name"};
         String[] excelFields = {"主键", "名字"};
-        ExcelUtil.toXlsx(new FileOutputStream("D:/Temp/toXlsx2.xlsx"),list);
+        ExcelUtil.toXlsx(new FileOutputStream("D:/Temp/toXlsx2.xlsx"),list,fields);
     }
 
     @Test
@@ -80,5 +80,7 @@ public class ExcelUtilTest {
         ps.executeBatch();
         conn.commit();
     }
+
+
 
 }

@@ -54,8 +54,32 @@ public class ExcelUtil {
      * @param list   数据集
      * @throws IOException
      */
-    public static void toXlsx(InputStream in, OutputStream out, String[] fields, List list) throws IOException {
-        try (XSSFWorkbook workbook = new XSSFWorkbook(in); OutputStream outputStream = out) {
+    public static void toXlsxByTemplate(InputStream in, OutputStream out, List list, String[] fields) throws IOException {
+        toXlsx(new XSSFWorkbook(in), out, list, fields);
+    }
+
+
+    public static void toXlsxByTemplate(InputStream in, OutputStream out, List list) throws IOException {
+        String[] fields =  JsonUtil.getFieldNames(list.get(0));
+        toXlsx(new XSSFWorkbook(in), out, list, fields);
+    }
+
+    public static void toXlsx(OutputStream out, List list, String[] fields) throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet();
+        Row headRow = sheet.createRow(0);
+//            Set<String> fields = JsonUtil.change(list.get(0), LinkedHashMap.class).keySet();
+        int colIndex = 0;
+        for (String field : fields) {
+            Cell headCell = headRow.createCell(colIndex);
+            headCell.setCellValue(field);
+            colIndex++;
+        }
+        toXlsx(workbook, out, list, fields);
+    }
+
+    private static void toXlsx(XSSFWorkbook workbook, OutputStream out, List list, String[] fields) throws IOException {
+        try (XSSFWorkbook wk = workbook; OutputStream outputStream = out) {
             XSSFSheet sheet = workbook.getSheetAt(0);
             int rowIndex = 1;
             for (Object object : list) {
@@ -65,34 +89,6 @@ public class ExcelUtil {
                     Cell cell = dataRow.createCell(i);
                     Object value = map.get(fields[i]);
                     setValue(cell, value);
-                }
-                rowIndex++;
-            }
-            workbook.write(out);
-        }
-    }
-
-    public static void toXlsx(OutputStream out, List list) throws IOException {
-        try (XSSFWorkbook workbook = new XSSFWorkbook(); OutputStream outputStream = out) {
-            XSSFSheet sheet = workbook.createSheet();
-            Row headRow = sheet.createRow(0);
-            Set<String> fields = JsonUtil.change(list.get(0), LinkedHashMap.class).keySet();
-            int colIndex = 0;
-            for (String field : fields) {
-                Cell headCell = headRow.createCell(colIndex);
-                headCell.setCellValue(field);
-                colIndex++;
-            }
-
-            int rowIndex = 1;
-            for (Object object : list) {
-                Row dataRow = sheet.createRow(rowIndex);
-                Map map = JsonUtil.change(object, Map.class);
-                colIndex = 0;
-                for (String field : fields) {
-                    Cell cell = dataRow.createCell(colIndex);
-                    setValue(cell, map.get(field));
-                    colIndex++;
                 }
                 rowIndex++;
             }
@@ -121,7 +117,7 @@ public class ExcelUtil {
     }
 
     private static void setValue(Cell cell, Object value) {
-        if (null == value) {
+        if (null == value || null == value) {
             cell.setCellValue("");
         }
         if (value instanceof Date) {
@@ -133,7 +129,8 @@ public class ExcelUtil {
         } else if (value instanceof Boolean) {
             cell.setCellValue((Boolean) value);
         } else {
-            cell.setCellValue(value.toString());
+            cell.setCellValue("");
+//            cell.setCellValue(value.toString());
         }
     }
 
