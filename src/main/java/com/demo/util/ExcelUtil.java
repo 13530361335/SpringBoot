@@ -1,9 +1,7 @@
 package com.demo.util;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,27 +45,18 @@ public class ExcelUtil {
         }
     }
 
-
     /**
-     * 导出excel
+     * 导入excel
      *
-     * @param list         数据
-     * @param fields       数据字段名称
-     * @param excelFields  excel字段名称,与fields下标对应
-     * @param outputStream
+     * @param in     模板文件流
+     * @param out    生成excel文件流
+     * @param fields 字段数组
+     * @param list   数据集
      * @throws IOException
      */
-    public static void toXlsx(List list, String[] fields, String[] excelFields, OutputStream outputStream) throws IOException {
-        try (XSSFWorkbook workbook = new XSSFWorkbook(); OutputStream out = outputStream) {
-            XSSFSheet sheet = workbook.createSheet();
-            Row headRow = sheet.createRow(0);
-            for (int i = 0; i < excelFields.length; i++) {
-
-                Cell headCell = headRow.createCell(i);
-                headCell.setCellValue(excelFields[i]);
-                headCell.setCellStyle(getHeadStyle(workbook));
-            }
-
+    public static void toXlsx(InputStream in, OutputStream out, String[] fields, List list) throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook(in); OutputStream outputStream = out) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
             int rowIndex = 1;
             for (Object object : list) {
                 Row dataRow = sheet.createRow(rowIndex);
@@ -76,7 +65,34 @@ public class ExcelUtil {
                     Cell cell = dataRow.createCell(i);
                     Object value = map.get(fields[i]);
                     setValue(cell, value);
-                    cell.setCellStyle(getCellStyle(workbook));
+                }
+                rowIndex++;
+            }
+            workbook.write(out);
+        }
+    }
+
+    public static void toXlsx(OutputStream out, List list) throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook(); OutputStream outputStream = out) {
+            XSSFSheet sheet = workbook.createSheet();
+            Row headRow = sheet.createRow(0);
+            Set<String> fields = JsonUtil.change(list.get(0), LinkedHashMap.class).keySet();
+            int colIndex = 0;
+            for (String field : fields) {
+                Cell headCell = headRow.createCell(colIndex);
+                headCell.setCellValue(field);
+                colIndex++;
+            }
+
+            int rowIndex = 1;
+            for (Object object : list) {
+                Row dataRow = sheet.createRow(rowIndex);
+                Map map = JsonUtil.change(object, Map.class);
+                colIndex = 0;
+                for (String field : fields) {
+                    Cell cell = dataRow.createCell(colIndex);
+                    setValue(cell, map.get(field));
+                    colIndex++;
                 }
                 rowIndex++;
             }
@@ -121,41 +137,4 @@ public class ExcelUtil {
         }
     }
 
-    // 设置下拉框
-    public static void setDropDownBox(XSSFSheet sheet, String[] values, int colIndex) {
-        DataValidationHelper dvHelper = new XSSFDataValidationHelper(sheet);
-        XSSFDataValidationConstraint constraint = (XSSFDataValidationConstraint) dvHelper.createExplicitListConstraint(values);
-        CellRangeAddressList addressList = new CellRangeAddressList(1, 100, colIndex, colIndex);
-        DataValidation validation = dvHelper.createValidation(constraint, addressList);
-        sheet.addValidationData(validation);
-    }
-
-    // 设置标题行样式
-    public static XSSFCellStyle getHeadStyle(XSSFWorkbook workbook) {
-        XSSFFont font = workbook.createFont();
-        font.setFontName("宋体");
-        font.setFontHeight(12);
-        font.setColor(HSSFColor.WHITE.index);
-
-        XSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        style.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.index);// 背景色
-        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);             // 竖向居中
-        style.setAlignment(HorizontalAlignment.CENTER);                   // 横向居中
-        return style;
-    }
-
-    // 设置内容样式
-    public static XSSFCellStyle getCellStyle(XSSFWorkbook workbook) {
-        XSSFFont font = workbook.createFont();
-        font.setFontName("Arial");
-        font.setFontHeight(10);
-
-        XSSFCellStyle style = workbook.createCellStyle();
-        style.setFont(font);
-        style.setVerticalAlignment(VerticalAlignment.CENTER);             // 竖向居中
-        style.setAlignment(HorizontalAlignment.LEFT);                     // 横向居中
-        return style;
-    }
 }
