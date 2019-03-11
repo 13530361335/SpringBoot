@@ -33,20 +33,59 @@ public class JsonUtil {
         return JSON.parseObject(json, clazz);
     }
 
-    public static <T> T toObject(Map<String, Object> map, Class<T> clazz) {
-        if (map == null)
-            return null;
-        try {
-            if ("java.util.Map".equals(clazz.getTypeName())) {
-                return (T) map;
-            }
-            T obj = clazz.newInstance();
-            BeanUtils.populate(obj, map);
-            return obj;
-        } catch (Exception e) {
-            e.printStackTrace();
+        public static <T> T map2Object(Map<String, Object> map, Class<T> clazz) {
+        if (map == null) {
             return null;
         }
+        T obj = null;
+        try {
+            obj = clazz.newInstance();
+            Field[] fields = obj.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                int mod = field.getModifiers();
+                if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+                    continue;
+                }
+                field.setAccessible(true);
+                String filedTypeName = field.getType().getName();
+                if (filedTypeName.equalsIgnoreCase("java.util.date")) {
+                    String datetimestamp = String.valueOf(map.get(field.getName()));
+                    if (datetimestamp.equalsIgnoreCase("null")) {
+                        field.set(obj, null);
+                    } else {
+                        field.set(obj, new Date(Long.parseLong(datetimestamp)));
+                    }
+                } else {
+                    field.set(obj, map.get(field.getName()));
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+        }
+        return obj;
+    }
+    
+        /**
+     * 实体对象转成Map
+     * @param obj 实体对象
+     * @return
+     */
+    public static Map<String, Object> object2Map(Object obj) {
+        Map<String, Object> map = new HashMap();
+        if (obj == null) {
+            return map;
+        }
+        Class clazz = obj.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        try {
+            for (Field field : fields) {
+                field.setAccessible(true);
+                map.put(field.getName(), field.get(obj));
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+        }
+        return map;
     }
 
     public static Map<String, Object> toMap(Object object) {
